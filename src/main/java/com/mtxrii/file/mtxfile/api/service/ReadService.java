@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UploadService {
+public class ReadService {
 
-    public static List<Map<String, String>> handleConvertCsv(MultipartFile file) throws IOException {
+    public List<Map<String, String>> handleConvertCsv(MultipartFile file) throws IOException {
         try (
                 Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
                 CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim().parse(reader)

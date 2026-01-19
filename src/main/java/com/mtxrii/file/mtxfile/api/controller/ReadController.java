@@ -1,9 +1,10 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
-import com.mtxrii.file.mtxfile.api.service.UploadService;
+import com.mtxrii.file.mtxfile.api.service.ReadService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,15 +15,16 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class UploadController {
-    private final UploadService uploadService;
+@RequestMapping("/read")
+public class ReadController {
+    private final ReadService readService;
 
-    public UploadController(UploadService uploadService) {
-        this.uploadService = uploadService;
+    public ReadController(ReadService readService) {
+        this.readService = readService;
     }
 
-    @PostMapping(path = "/test/read", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleUpload(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping(path = "/test/contents", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> handleTestContents(@RequestParam("file") MultipartFile file) throws IOException {
         String text = new String(file.getBytes(), StandardCharsets.UTF_8);
         return ResponseEntity
                 .status(200)
@@ -37,7 +39,7 @@ public class UploadController {
     public ResponseEntity<List<Map<String, String>>> handleConvertCsv(
             @RequestParam("file") MultipartFile file
     ) throws IOException {
-        List<Map<String, String>> json = UploadService.handleConvertCsv(file);
+        List<Map<String, String>> json = readService.handleConvertCsv(file);
         return ResponseEntity.status(200).body(json);
     }
 }
