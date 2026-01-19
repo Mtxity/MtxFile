@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile;
 
 import com.google.gson.Gson;
+import com.mtxrii.file.mtxfile.api.model.Response;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -12,7 +13,7 @@ public class MtxFileApplication {
         SpringApplication.run(MtxFileApplication.class, args);
     }
 
-    public static String toJson(Object obj) {
-        return GSON.toJson(obj);
+    public static String toJson(Response response) {
+        return GSON.toJson(response);
     }
 }
