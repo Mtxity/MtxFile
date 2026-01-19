@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 @RestController
 public class UploadController {
     private final UploadService uploadService;
@@ -16,10 +19,11 @@ public class UploadController {
         this.uploadService = uploadService;
     }
 
-    @PostMapping(path = "/upload", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleUpload(@RequestParam("file") MultipartFile file) {
+    @PostMapping(path = "/test/read", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> handleUpload(@RequestParam("file") MultipartFile file) throws IOException {
+        String text = new String(file.getBytes(), StandardCharsets.UTF_8);
         return ResponseEntity
                 .status(200)
-                .body("{\"fileName\": \"" + file.getOriginalFilename() + "\"}");
+                .body("{\"fileName\": \"" + file.getOriginalFilename() + "\", \"contents\": \"" + text + "\"}");
     }
 }
