@@ -16,7 +16,7 @@ public class UploadController {
         this.uploadService = uploadService;
     }
 
-    @PostMapping(path = "/upload", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/upload", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> handleUpload(@RequestParam("file") MultipartFile file) {
         return ResponseEntity
                 .status(200)
