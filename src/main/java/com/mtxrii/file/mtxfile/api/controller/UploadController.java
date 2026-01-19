@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class UploadController {
@@ -25,5 +27,17 @@ public class UploadController {
         return ResponseEntity
                 .status(200)
                 .body("{\"fileName\": \"" + file.getOriginalFilename() + "\", \"contents\": \"" + text + "\"}");
+    }
+
+    @PostMapping(
+            value = "/convert/csv",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<List<Map<String, String>>> handleConvertCsv(
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        List<Map<String, String>> json = UploadService.handleConvertCsv(file);
+        return ResponseEntity.status(200).body(json);
     }
 }
