@@ -1,5 +1,6 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
+import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.service.ReadService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,11 @@ public class ReadController {
     }
 
     @PostMapping(path = "/contents", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleReadContents(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<ReadContentsResponse> handleReadContents(@RequestParam("file") MultipartFile file) throws IOException {
         String text = new String(file.getBytes(), StandardCharsets.UTF_8);
         return ResponseEntity
                 .status(200)
-                .body("{\"fileName\": \"" + file.getOriginalFilename() + "\", \"contents\": \"" + text + "\"}");
+                .body(new ReadContentsResponse(true, 200, file.getOriginalFilename(), text));
     }
 
     @PostMapping(

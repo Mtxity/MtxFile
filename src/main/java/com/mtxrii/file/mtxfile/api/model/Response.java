@@ -1,8 +1,8 @@
 package com.mtxrii.file.mtxfile.api.model;
 
 public class Response {
-    private final boolean success;
-    private final int code;
+    protected final boolean success;
+    protected final int code;
 
     public Response(boolean success, int code) {
         this.success = success;
