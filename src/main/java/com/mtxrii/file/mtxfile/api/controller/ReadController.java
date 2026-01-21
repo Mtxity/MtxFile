@@ -23,8 +23,8 @@ public class ReadController {
         this.readService = readService;
     }
 
-    @PostMapping(path = "/test/contents", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> handleTestContents(@RequestParam("file") MultipartFile file) throws IOException {
+    @PostMapping(path = "/contents", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> handleReadContents(@RequestParam("file") MultipartFile file) throws IOException {
         String text = new String(file.getBytes(), StandardCharsets.UTF_8);
         return ResponseEntity
                 .status(200)
