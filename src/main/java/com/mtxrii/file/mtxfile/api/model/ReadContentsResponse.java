@@ -9,4 +9,9 @@ public class ReadContentsResponse extends Response {
         this.fileName = fileName;
         this.contents = contents;
     }
+
+    public ReadContentsResponse(String fileName, String contents) {
+        this.fileName = fileName;
+        this.contents = contents;
+    }
 }

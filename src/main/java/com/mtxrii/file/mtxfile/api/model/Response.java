@@ -8,4 +8,8 @@ public class Response {
         this.success = success;
         this.code = code;
     }
+
+    public Response() {
+        this(true, 200);
+    }
 }
