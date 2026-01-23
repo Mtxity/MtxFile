@@ -55,4 +55,16 @@ public class ReadController {
         Map<String, List<Map<String, Object>>> json = this.readService.jsonifyXls(file);
         return ResponseEntity.status(200).body(json);
     }
+
+    @PostMapping(
+            value = "/jsonify/xml",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> handleJsonifyXml(
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        String json = this.readService.jsonifyXml(file).toString();
+        return ResponseEntity.status(200).body(json);
+    }
 }
