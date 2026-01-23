@@ -18,8 +18,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -52,7 +58,28 @@ public class ReadService {
         } else {
             fileContents = new String(file.getBytes(), StandardCharsets.UTF_8);
         }
-        return new ReadContentsResponse(file.getOriginalFilename(), fileContents);
+
+        Metadata metadata = new Metadata();
+        metadata.set(TikaCoreProperties.RESOURCE_NAME_KEY, file.getOriginalFilename());
+        Map<String, Object> foundMeta;
+        try (InputStream is = file.getInputStream()) {
+            AutoDetectParser parser = new AutoDetectParser();
+            parser.parse(is, new BodyContentHandler(-1), metadata);
+            foundMeta = new LinkedHashMap<>();
+            for (String key : metadata.names()) {
+                foundMeta.put(key, metadata.get(key));
+            }
+        } catch (SAXException | TikaException e) {
+            foundMeta = null;
+        }
+
+        return new ReadContentsResponse(
+                file.getOriginalFilename(),
+                file.getSize(),
+                file.getContentType(),
+                fileContents,
+                foundMeta
+        );
     }
 
     public List<Map<String, String>> jsonifyCsv(MultipartFile file) throws IOException {
