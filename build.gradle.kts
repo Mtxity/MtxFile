@@ -23,7 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.google.code.gson:gson:2.8.9")
     implementation("org.apache.commons:commons-csv:1.10.0")
-    implementation("org.apache.poi:poi:5.2.5")
+    implementation("org.apache.poi:poi:5.4.0")
     implementation("org.apache.poi:poi-ooxml:5.4.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
