@@ -1,8 +1,8 @@
 package com.mtxrii.file.mtxfile.api.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -35,7 +35,7 @@ import java.util.Optional;
 @Service
 public class ReadService {
     private static final XmlMapper XML_MAPPER = new XmlMapper();
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
 
     public List<Map<String, String>> jsonifyCsv(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".csv");
@@ -117,6 +117,11 @@ public class ReadService {
         return XML_MAPPER.readTree(file.getInputStream());
     }
 
+    public JsonNode jsonifyYml(MultipartFile file) throws IOException {
+        this.validateFileAndExtension(file, ".yml", ".yaml");
+        return YAML_MAPPER.readTree(file.getInputStream());
+    }
+
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
@@ -128,7 +133,7 @@ public class ReadService {
                 return;
             }
         }
-        throw new IllegalArgumentException("Only " + String.join(", ", validExtensions) + " files are supported");
+        throw new IllegalArgumentException("Only " + String.join(", ", validExtensions) + " files are supported"); // @TODO: Add method to add an "or" between the last two elements in .join()
     }
 
     private Object xlsCellToJsonValue(Cell cell, DataFormatter formatter, FormulaEvaluator evaluator) {
