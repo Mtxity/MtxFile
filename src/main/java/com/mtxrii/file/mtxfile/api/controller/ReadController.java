@@ -33,14 +33,14 @@ public class ReadController {
     }
 
     @PostMapping(
-            value = "/convert/csv",
+            value = "/jsonify/csv",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<Map<String, String>>> handleConvertCsv(
+    public ResponseEntity<List<Map<String, String>>> handleJsonifyCsv(
             @RequestParam("file") MultipartFile file
     ) throws IOException {
-        List<Map<String, String>> json = readService.handleConvertCsv(file);
+        List<Map<String, String>> json = this.readService.jsonifyCsv(file);
         return ResponseEntity.status(200).body(json);
     }
 }

@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class ReadService {
 
-    public List<Map<String, String>> handleConvertCsv(MultipartFile file) throws IOException {
+    public List<Map<String, String>> jsonifyCsv(MultipartFile file) throws IOException {
         try (
                 Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
                 CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim().parse(reader)
