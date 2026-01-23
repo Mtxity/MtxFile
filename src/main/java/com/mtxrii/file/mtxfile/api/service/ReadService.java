@@ -178,7 +178,44 @@ public class ReadService {
                 return;
             }
         }
-        throw new IllegalArgumentException("Only " + String.join(", ", validExtensions) + " files are supported"); // @TODO: Add method to add an "or" between the last two elements in .join()
+        throw new IllegalArgumentException("Only " + this.stringJoin(", ", " or ", validExtensions) + " files are supported");
+    }
+
+    protected String stringJoin(String delimiter, String lastDelimiter, String... elements) {
+        if (delimiter == null || lastDelimiter == null || elements == null) {
+            throw new NullPointerException();
+        }
+
+        int len = elements.length;
+        if (len == 0) {
+            return "";
+        } else if (len == 1) {
+            if (elements[0] == null) {
+                throw new NullPointerException();
+            }
+            return elements[0];
+        } else if (len == 2) {
+            if (elements[0] == null || elements[1] == null) {
+                throw new NullPointerException();
+            }
+            return elements[0] + lastDelimiter + elements[1];
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < len; i++) {
+            String s = elements[i];
+            if (s == null) {
+                throw new NullPointerException();
+            }
+
+            if (i > 0) {
+                sb.append(i == len - 1 ? lastDelimiter : delimiter);
+            }
+            sb.append(s);
+        }
+
+        return sb.toString();
     }
 
     private Object xlsCellToJsonValue(Cell cell, DataFormatter formatter, FormulaEvaluator evaluator) {
