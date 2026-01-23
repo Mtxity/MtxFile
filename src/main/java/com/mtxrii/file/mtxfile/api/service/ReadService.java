@@ -4,7 +4,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -93,7 +96,7 @@ public class ReadService {
                     Map<String, Object> rowMap = new LinkedHashMap<>();
                     for (Map.Entry<Integer, String> header : headerMap.entrySet()) {
                         Cell cell = row.getCell(header.getKey(), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                        Object value = cell == null ? null : formatter.formatCellValue(cell, evaluator); // @TODO: Consider parsing different data types differently
+                        Object value = this.xlsCellToJsonValue(cell, formatter, evaluator);
                         rowMap.put(header.getValue(), value);
                     }
                     rows.add(rowMap);
@@ -116,5 +119,34 @@ public class ReadService {
             }
         }
         throw new IllegalArgumentException("Only " + String.join(", ", validExtensions) + " files are supported");
+    }
+
+    private Object xlsCellToJsonValue(Cell cell, DataFormatter formatter, FormulaEvaluator evaluator) {
+        if (cell == null) {
+            return null;
+        }
+
+        CellType type = cell.getCellType();
+        if (type == CellType.FORMULA) {
+            type = evaluator.evaluateFormulaCell(cell);
+        }
+
+        return switch (type) {
+            case STRING -> {
+                String v = cell.getStringCellValue();
+                yield v != null ? v.trim() : null;
+            }
+            case BOOLEAN -> cell.getBooleanCellValue();
+            case NUMERIC -> {
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    yield cell.getDateCellValue().toInstant().atZone(ZoneOffset.UTC).toOffsetDateTime().toString();
+                } else {
+                    yield cell.getNumericCellValue();
+                }
+            }
+            case BLANK -> null;
+            case ERROR -> formatter.formatCellValue(cell); // e.g., "#DIV/0!"
+            default -> formatter.formatCellValue(cell, evaluator);
+        };
     }
 }
