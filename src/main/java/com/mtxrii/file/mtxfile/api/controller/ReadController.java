@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -26,10 +25,10 @@ public class ReadController {
 
     @PostMapping(path = "/contents", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReadContentsResponse> handleReadContents(@RequestParam("file") MultipartFile file) throws IOException {
-        String text = new String(file.getBytes(), StandardCharsets.UTF_8);
+        ReadContentsResponse response = this.readService.readContents(file);
         return ResponseEntity
                 .status(200)
-                .body(new ReadContentsResponse(true, 200, file.getOriginalFilename(), text));
+                .body(response);
     }
 
     @PostMapping(

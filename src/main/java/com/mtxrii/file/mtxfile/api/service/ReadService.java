@@ -3,9 +3,12 @@ package com.mtxrii.file.mtxfile.api.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -30,12 +33,27 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class ReadService {
     private static final XmlMapper XML_MAPPER = new XmlMapper();
     private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+
+    public ReadContentsResponse readContents(MultipartFile file) throws IOException {
+        this.validateFileAndExtension(file, ".txt", ".md", ".pdf");
+        String fileContents;
+        if (Objects.requireNonNull(file.getOriginalFilename()).toLowerCase(Locale.ROOT).endsWith(".pdf")) {
+            try (PDDocument document = PDDocument.load(file.getInputStream())) {
+                PDFTextStripper stripper = new PDFTextStripper();
+                fileContents = stripper.getText(document).trim();
+            }
+        } else {
+            fileContents = new String(file.getBytes(), StandardCharsets.UTF_8);
+        }
+        return new ReadContentsResponse(file.getOriginalFilename(), fileContents);
+    }
 
     public List<Map<String, String>> jsonifyCsv(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".csv");
