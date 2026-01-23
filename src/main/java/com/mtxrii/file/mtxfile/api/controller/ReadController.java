@@ -67,4 +67,16 @@ public class ReadController {
         String json = this.readService.jsonifyXml(file).toString();
         return ResponseEntity.status(200).body(json);
     }
+
+    @PostMapping(
+            value = "/jsonify/yml",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<String> handleJsonifyYml(
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        String json = this.readService.jsonifyYml(file).toString();
+        return ResponseEntity.status(200).body(json);
+    }
 }
