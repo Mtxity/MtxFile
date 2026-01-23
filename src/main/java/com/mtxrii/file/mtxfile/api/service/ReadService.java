@@ -1,5 +1,8 @@
 package com.mtxrii.file.mtxfile.api.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -31,6 +34,8 @@ import java.util.Optional;
 
 @Service
 public class ReadService {
+    private static final XmlMapper XML_MAPPER = new XmlMapper();
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     public List<Map<String, String>> jsonifyCsv(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".csv");
@@ -105,6 +110,13 @@ public class ReadService {
             }
             return result;
         }
+    }
+
+    public JsonNode jsonifyXml(MultipartFile file) throws IOException {
+        this.validateFileAndExtension(file, ".xml");
+        JsonNode xmlTree = XML_MAPPER.readTree(file.getInputStream());
+        byte[] xmlSplice = XML_MAPPER.writeValueAsBytes(xmlTree);
+        return JSON_MAPPER.readTree(xmlSplice);
     }
 
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
