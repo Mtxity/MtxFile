@@ -114,9 +114,7 @@ public class ReadService {
 
     public JsonNode jsonifyXml(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".xml");
-        JsonNode xmlTree = XML_MAPPER.readTree(file.getInputStream());
-        byte[] xmlSplice = XML_MAPPER.writeValueAsBytes(xmlTree);
-        return JSON_MAPPER.readTree(xmlSplice);
+        return XML_MAPPER.readTree(file.getInputStream());
     }
 
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
