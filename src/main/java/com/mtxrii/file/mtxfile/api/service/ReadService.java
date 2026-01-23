@@ -24,11 +24,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ReadService {
 
     public List<Map<String, String>> jsonifyCsv(MultipartFile file) throws IOException {
+        this.validateFileAndExtension(file, ".csv");
         try (
                 Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
                 CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim().parse(reader)
@@ -46,6 +48,7 @@ public class ReadService {
     }
 
     public Map<String, List<Map<String, Object>>> jsonifyXls(MultipartFile file) throws IOException {
+        this.validateFileAndExtension(file, ".xls", ".xlsx");
         try (
                 InputStream is = file.getInputStream();
                 Workbook workbook = WorkbookFactory.create(is);
@@ -99,5 +102,19 @@ public class ReadService {
             }
             return result;
         }
+    }
+
+    private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+
+        String fileName = Optional.ofNullable(file.getOriginalFilename()).orElse("").toLowerCase(Locale.ROOT);
+        for (String validExtension : validExtensions) {
+            if (fileName.endsWith(validExtension.toLowerCase(Locale.ROOT))) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Only " + String.join(", ", validExtensions) + " files are supported");
     }
 }
