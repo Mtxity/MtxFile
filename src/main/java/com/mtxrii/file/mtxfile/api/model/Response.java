@@ -1,12 +1,15 @@
 package com.mtxrii.file.mtxfile.api.model;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class Response {
-    public final boolean success;
-    public final int code;
+    public final Map<String, Object> requestMeta;
 
     public Response(boolean success, int code) {
-        this.success = success;
-        this.code = code;
+        this.requestMeta = new LinkedHashMap<>();
+        this.requestMeta.put("success", success);
+        this.requestMeta.put("code", code);
     }
 
     public Response() {
