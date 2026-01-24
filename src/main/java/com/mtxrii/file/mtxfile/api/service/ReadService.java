@@ -168,6 +168,49 @@ public class ReadService {
         return YAML_MAPPER.readTree(file.getInputStream());
     }
 
+    public int wordCount(MultipartFile file) throws IOException {
+        this.validateFileAndExtension(file, ".txt", ".md", ".pdf", ".csv", ".xls", ".xlsx", ".xml", ".yml", ".yaml");
+        return switch (this.getFileType(file)) {
+            case CSV -> {
+                List<Map<String, String>> contents = this.jsonifyCsv(file);
+                int words = 0;
+                if (contents.isEmpty()) {
+                    yield words;
+                }
+                for (String headers : contents.getFirst().keySet()) {
+                    words += headers.split(" ").length;
+                }
+                for (Map<String, String> row : contents) {
+                    for (String cell : row.values()) {
+                        words += cell.split(" ").length;
+                    }
+                }
+                yield words;
+            }
+            case EXCEL, EXCEL_MAC -> {
+                Map<String, List<Map<String, Object>>> contents = this.jsonifyXls(file);
+                int words = 0;
+                if (contents.isEmpty()) {
+                    yield words;
+                }
+                for (List<Map<String, Object>> sheet : contents.values()) {
+                    for (String headers : sheet.getFirst().keySet()) {
+                        words += headers.split(" ").length;
+                    }
+                    for (Map<String, Object> row : sheet) {
+                        for (Object cell : row.values()) {
+                            if (cell instanceof String) {
+                                words += ((String) cell).split(" ").length;
+                            } else {
+                                words ++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
@@ -260,5 +303,9 @@ public class ReadService {
 
         String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
         return FileType.fromExtension(ext);
+    }
+
+    private int xmlJsonNodeWordCount(JsonNode node, int wordCount) {
+
     }
 }
