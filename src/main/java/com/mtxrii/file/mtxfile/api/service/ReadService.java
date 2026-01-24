@@ -41,7 +41,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,7 +52,7 @@ public class ReadService {
     public ReadContentsResponse readContents(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".txt", ".md", ".pdf");
         String fileContents;
-        if (Objects.requireNonNull(file.getOriginalFilename()).toLowerCase(Locale.ROOT).endsWith(".pdf")) { // @TODO: Add method detecting this to FileType
+        if (this.getFileType(file) == FileType.PDF) {
             try (PDDocument document = PDDocument.load(file.getInputStream())) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 fileContents = stripper.getText(document).trim();
