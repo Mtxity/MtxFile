@@ -11,7 +11,8 @@ public enum FileType {
     EXCEL_MAC(".xlsx"),
     XML(".xml"),
     YML(".yml"),
-    YAML(".yaml");
+    YAML(".yaml"),
+    UNKNOWN(null);
 
     public final String extension;
 
@@ -25,6 +26,6 @@ public enum FileType {
                 return fileType;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 }

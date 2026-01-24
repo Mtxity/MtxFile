@@ -3,6 +3,7 @@ package com.mtxrii.file.mtxfile.api.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.mtxrii.file.mtxfile.FileType;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -245,5 +246,19 @@ public class ReadService {
             case ERROR -> formatter.formatCellValue(cell); // e.g., "#DIV/0!"
             default -> formatter.formatCellValue(cell, evaluator);
         };
+    }
+
+    protected FileType getFileType(MultipartFile file) {
+        if (
+                file == null
+             || file.getOriginalFilename() == null
+             || file.getOriginalFilename().isEmpty()
+             || !file.getOriginalFilename().contains(".")
+        ) {
+            return FileType.UNKNOWN;
+        }
+
+        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
+        return FileType.fromExtension(ext);
     }
 }
