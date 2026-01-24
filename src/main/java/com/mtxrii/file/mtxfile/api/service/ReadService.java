@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ReadService {
@@ -333,17 +334,21 @@ public class ReadService {
     }
 
     private int xmlJsonNodeWordCount(JsonNode node, int wordCount) {
-        Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
-        while (fields.hasNext()) {
-            Map.Entry<String, JsonNode> entry = fields.next();
-            String fieldName = entry.getKey();
-            JsonNode value = entry.getValue();
+        Set<Map.Entry<String, JsonNode>> fields = node.properties();
+        for (Map.Entry<String, JsonNode> field : fields) {
+            String fieldName = field.getKey();
+            JsonNode value = field.getValue();
 
             wordCount += fieldName.split(" ").length * 2;
-            if (!value.isObject()) {
-                wordCount += value.asText().split(" ").length;
+            if (value.isObject()) {
+                wordCount += this.xmlJsonNodeWordCount(value, wordCount);
+            } else if (value.isArray()) {
+                Iterator<JsonNode> elements = value.elements();
+                while (elements.hasNext()) {
+                    wordCount = this.xmlJsonNodeWordCount(elements.next(), wordCount + 2);
+                }
             } else {
-                wordCount = this.xmlJsonNodeWordCount(value, wordCount);
+                wordCount += value.asText().split(" ").length;
             }
         }
         return wordCount;
