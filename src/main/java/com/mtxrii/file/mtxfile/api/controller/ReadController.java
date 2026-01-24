@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mtxrii.file.mtxfile.api.model.JsonifyResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
+import com.mtxrii.file.mtxfile.api.model.WordCountResponse;
 import com.mtxrii.file.mtxfile.api.service.ReadService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
@@ -100,6 +101,21 @@ public class ReadController {
         JsonNode json = this.readService.jsonifyYml(file);
         JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
         Response response = jsonifyResponse.path(request.getRequestURI());
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @PostMapping(
+            value = "/wordCount",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Response> handleWordCount(
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
+    ) throws IOException {
+        int wordCount = this.readService.wordCount(file);
+        WordCountResponse wordCountResponse = new WordCountResponse(file.getOriginalFilename(), wordCount);
+        Response response = wordCountResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 }

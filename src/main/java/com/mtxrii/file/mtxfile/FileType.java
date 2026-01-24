@@ -22,6 +22,9 @@ public enum FileType {
 
     public static FileType fromExtension(String extension) {
         for (FileType fileType : FileType.values()) {
+            if (fileType.extension == null) {
+                continue;
+            }
             if (fileType.extension.equals(extension.toLowerCase(Locale.ROOT))) {
                 return fileType;
             }

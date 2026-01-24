@@ -328,7 +328,7 @@ public class ReadService {
             return FileType.UNKNOWN;
         }
 
-        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
+        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase(Locale.ROOT);
         return FileType.fromExtension(ext);
     }
 
