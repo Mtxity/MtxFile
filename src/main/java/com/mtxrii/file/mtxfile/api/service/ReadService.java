@@ -36,6 +36,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -208,6 +209,18 @@ public class ReadService {
                     }
                 }
             }
+            case XML -> {
+                JsonNode contents = this.jsonifyXml(file);
+                if (contents.isEmpty()) {
+                    yield 0;
+                } else {
+                    yield this.xmlJsonNodeWordCount(contents, 0);
+                }
+            }
+            case YML, YAML -> {
+                String contents = new String(file.getBytes(), StandardCharsets.UTF_8);
+                yield contents.replaceAll("\n", " ").replaceAll("-", "").split("\\s+").length;
+            }
         }
     }
 
@@ -306,6 +319,19 @@ public class ReadService {
     }
 
     private int xmlJsonNodeWordCount(JsonNode node, int wordCount) {
+        Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> entry = fields.next();
+            String fieldName = entry.getKey();
+            JsonNode value = entry.getValue();
 
+            wordCount += fieldName.split(" ").length * 2;
+            if (!value.isObject()) {
+                wordCount += value.asText().split(" ").length;
+            } else {
+                wordCount = this.xmlJsonNodeWordCount(value, wordCount);
+            }
+        }
+        return wordCount;
     }
 }
