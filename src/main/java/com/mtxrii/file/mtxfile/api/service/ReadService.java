@@ -52,7 +52,7 @@ public class ReadService {
     public ReadContentsResponse readContents(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".txt", ".md", ".pdf");
         String fileContents;
-        if (Objects.requireNonNull(file.getOriginalFilename()).toLowerCase(Locale.ROOT).endsWith(".pdf")) {
+        if (Objects.requireNonNull(file.getOriginalFilename()).toLowerCase(Locale.ROOT).endsWith(".pdf")) { // @TODO: Add method detecting this to FileType
             try (PDDocument document = PDDocument.load(file.getInputStream())) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 fileContents = stripper.getText(document).trim();
@@ -208,6 +208,7 @@ public class ReadService {
                         }
                     }
                 }
+                yield words;
             }
             case XML -> {
                 JsonNode contents = this.jsonifyXml(file);
@@ -221,7 +222,20 @@ public class ReadService {
                 String contents = new String(file.getBytes(), StandardCharsets.UTF_8);
                 yield contents.replaceAll("\n", " ").replaceAll("-", "").split("\\s+").length;
             }
-        }
+            case TEXT, MARKDOWN -> {
+                String contents = new String(file.getBytes(), StandardCharsets.UTF_8);
+                yield contents.replaceAll("\n", " ").split("\\s+").length;
+            }
+            case PDF -> {
+                String contents;
+                try (PDDocument document = PDDocument.load(file.getInputStream())) {
+                    PDFTextStripper stripper = new PDFTextStripper();
+                    contents = stripper.getText(document).trim();
+                }
+                yield contents.replaceAll("\n", " ").replaceAll("-", "").split("\\s+").length;
+            }
+            case UNKNOWN -> 0;
+        };
     }
 
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
