@@ -27,7 +27,11 @@ public class ReadController {
         this.readService = readService;
     }
 
-    @PostMapping(path = "/contents", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            value = "/contents",
+            consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<Response> handleReadContents(
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request
