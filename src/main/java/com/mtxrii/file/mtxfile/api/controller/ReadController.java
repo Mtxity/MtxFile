@@ -45,11 +45,12 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyCsv(
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
     ) throws IOException {
         List<Map<String, String>> json = this.readService.jsonifyCsv(file);
         JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-        Response response = jsonifyResponse;
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 
@@ -59,11 +60,12 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyXls(
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
     ) throws IOException {
         Map<String, List<Map<String, Object>>> json = this.readService.jsonifyXls(file);
         JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-        Response response = jsonifyResponse;
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 
@@ -73,11 +75,12 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyXml(
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
     ) throws IOException {
         JsonNode json = this.readService.jsonifyXml(file);
         JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-        Response response = jsonifyResponse;
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 
@@ -87,11 +90,12 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyYml(
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
     ) throws IOException {
         JsonNode json = this.readService.jsonifyYml(file);
         JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-        Response response = jsonifyResponse;
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 }
