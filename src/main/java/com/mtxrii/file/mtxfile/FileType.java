@@ -1,5 +1,7 @@
 package com.mtxrii.file.mtxfile;
 
+import java.util.Locale;
+
 public enum FileType {
     TEXT(".txt"),
     MARKDOWN(".md"),
@@ -15,5 +17,14 @@ public enum FileType {
 
     FileType(String extension) {
         this.extension = extension;
+    }
+
+    public static FileType fromExtension(String extension) {
+        for (FileType fileType : FileType.values()) {
+            if (fileType.extension.equals(extension.toLowerCase(Locale.ROOT))) {
+                return fileType;
+            }
+        }
+        return null;
     }
 }
