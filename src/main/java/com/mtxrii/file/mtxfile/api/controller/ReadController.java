@@ -1,5 +1,7 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.mtxrii.file.mtxfile.api.model.JsonifyResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.service.ReadService;
@@ -42,11 +44,13 @@ public class ReadController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<Map<String, String>>> handleJsonifyCsv(
+    public ResponseEntity<Response> handleJsonifyCsv(
             @RequestParam("file") MultipartFile file
     ) throws IOException {
         List<Map<String, String>> json = this.readService.jsonifyCsv(file);
-        return ResponseEntity.status(200).body(json);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse;
+        return ResponseEntity.status(200).body(response);
     }
 
     @PostMapping(
@@ -54,11 +58,13 @@ public class ReadController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<Map<String, List<Map<String, Object>>>> handleJsonifyXls(
+    public ResponseEntity<Response> handleJsonifyXls(
             @RequestParam("file") MultipartFile file
     ) throws IOException {
         Map<String, List<Map<String, Object>>> json = this.readService.jsonifyXls(file);
-        return ResponseEntity.status(200).body(json);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse;
+        return ResponseEntity.status(200).body(response);
     }
 
     @PostMapping(
@@ -66,11 +72,13 @@ public class ReadController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> handleJsonifyXml(
+    public ResponseEntity<Response> handleJsonifyXml(
             @RequestParam("file") MultipartFile file
     ) throws IOException {
-        String json = this.readService.jsonifyXml(file).toString();
-        return ResponseEntity.status(200).body(json);
+        JsonNode json = this.readService.jsonifyXml(file);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse;
+        return ResponseEntity.status(200).body(response);
     }
 
     @PostMapping(
@@ -78,10 +86,12 @@ public class ReadController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<String> handleJsonifyYml(
+    public ResponseEntity<Response> handleJsonifyYml(
             @RequestParam("file") MultipartFile file
     ) throws IOException {
-        String json = this.readService.jsonifyYml(file).toString();
-        return ResponseEntity.status(200).body(json);
+        JsonNode json = this.readService.jsonifyYml(file);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse;
+        return ResponseEntity.status(200).body(response);
     }
 }
