@@ -15,4 +15,9 @@ public class Response {
     public Response() {
         this(true, 200);
     }
+
+    public Response path(String path) {
+        this.requestMeta.put("path", path);
+        return this;
+    }
 }

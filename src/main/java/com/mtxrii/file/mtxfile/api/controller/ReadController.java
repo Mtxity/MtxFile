@@ -1,7 +1,9 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
+import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.service.ReadService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +26,12 @@ public class ReadController {
     }
 
     @PostMapping(path = "/contents", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReadContentsResponse> handleReadContents(@RequestParam("file") MultipartFile file) throws IOException {
-        ReadContentsResponse response = this.readService.readContents(file);
+    public ResponseEntity<Response> handleReadContents(
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
+    ) throws IOException {
+        ReadContentsResponse readContentsResponse = this.readService.readContents(file);
+        Response response = readContentsResponse.path(request.getRequestURI());
         return ResponseEntity
                 .status(200)
                 .body(response);
