@@ -32,4 +32,8 @@ public class ReadContentsResponse extends Response {
             this.fileMeta.put("extraFileMeta", metadata);
         }
     }
+
+    public String getContents() {
+        return this.contents;
+    }
 }
