@@ -118,4 +118,20 @@ public class ReadController {
         Response response = wordCountResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
+
+    @PostMapping(
+            value = "/summarize",
+            consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Response> handleSummarizeContents(
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
+    ) throws IOException {
+        ReadContentsResponse readContentsResponse = this.readService.summarizeContents(file);
+        Response response = readContentsResponse.path(request.getRequestURI());
+        return ResponseEntity
+                .status(200)
+                .body(response);
+    }
 }
