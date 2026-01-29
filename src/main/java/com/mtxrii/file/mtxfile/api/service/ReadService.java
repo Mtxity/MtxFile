@@ -5,6 +5,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.mtxrii.file.mtxfile.FileType;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
+import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
+import com.mtxrii.file.mtxfile.client.SummarizationClient;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -48,6 +50,12 @@ import java.util.Set;
 public class ReadService {
     private static final XmlMapper XML_MAPPER = new XmlMapper();
     private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+
+    private final SummarizationClient summarizationClient;
+
+    public ReadService(SummarizationClient summarizationClient) {
+        this.summarizationClient = summarizationClient;
+    }
 
     public ReadContentsResponse readContents(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".txt", ".md", ".pdf");
@@ -236,6 +244,15 @@ public class ReadService {
             }
             case UNKNOWN -> 0;
         };
+    }
+
+    public SummarizedContentsResponse summarizeContents(MultipartFile file) throws IOException {
+        ReadContentsResponse contents = this.readContents(file);
+        String summary = this.summarizationClient.summarize(contents.getContents());
+        return new SummarizedContentsResponse(
+                file.getOriginalFilename(),
+                summary
+        );
     }
 
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.mtxrii.file.mtxfile.api.model.JsonifyResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
+import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.WordCountResponse;
 import com.mtxrii.file.mtxfile.api.service.ReadService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -128,7 +129,7 @@ public class ReadController {
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        ReadContentsResponse readContentsResponse = this.readService.summarizeContents(file);
+        SummarizedContentsResponse readContentsResponse = this.readService.summarizeContents(file);
         Response response = readContentsResponse.path(request.getRequestURI());
         return ResponseEntity
                 .status(200)
