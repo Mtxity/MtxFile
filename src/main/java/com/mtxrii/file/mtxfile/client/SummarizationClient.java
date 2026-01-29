@@ -28,18 +28,13 @@ public class SummarizationClient {
         String requestBody =
         """
         {
-          "model": "gpt-4o-mini",
-          "messages": [
-            {
-              "role": "user",
-              "content": "Summarize the following text:\\n\\n%s"
-            }
-          ]
+          "model": "gpt-4.1-mini",
+          "input": "Summarize the following text:\\n\\n%s"
         }
         """.formatted(escapeJson(text));
 
         String response = webClient.post()
-                                   .uri("/chat/completions")
+                                   .uri("/responses")
                                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.apiKey)
                                    .bodyValue(requestBody)
                                    .retrieve()
