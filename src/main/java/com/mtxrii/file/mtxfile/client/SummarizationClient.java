@@ -46,10 +46,11 @@ public class SummarizationClient {
     private String extractSummary(String json) {
         try {
             JsonNode root = objectMapper.readTree(json);
-            return root.path("choices")
+            return root.path("output")
                        .get(0)
-                       .path("message")
-                       .path("content")
+                       .get("content")
+                       .get(0)
+                       .path("text")
                        .asText();
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse summary response", e);
