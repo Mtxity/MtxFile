@@ -318,6 +318,7 @@ public class ReadService {
         };
     }
 
+    // @TODO: Move this (and similar) to own utils class
     protected FileType getFileType(MultipartFile file) {
         if (
                 file == null

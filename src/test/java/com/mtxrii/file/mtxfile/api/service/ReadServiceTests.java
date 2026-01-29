@@ -1,11 +1,16 @@
 package com.mtxrii.file.mtxfile.api.service;
 
+import com.mtxrii.file.mtxfile.FileType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ReadServiceTests {
     private ReadService readService;
@@ -92,6 +97,45 @@ class ReadServiceTests {
             }
             testElements[10] = null;
             assertThrows(NullPointerException.class, () -> readService.stringJoin(", ", " or ", testElements));
+        }
+    }
+
+    @Nested
+    class GetFileTypeTests {
+        @Mock
+        MultipartFile mockFile = mock(MultipartFile.class);
+
+        @Test
+        void testGetFileType_nullFile() {
+            assertEquals(FileType.UNKNOWN, readService.getFileType(null));
+        }
+
+        @Test
+        void testGetFileType_emptyFile() {
+            when(mockFile.isEmpty()).thenReturn(true);
+            assertEquals(FileType.UNKNOWN, readService.getFileType(mockFile));
+        }
+
+        @Test
+        void testGetFileType_containsNothing() {
+            when(mockFile.isEmpty()).thenReturn(false);
+            when(mockFile.getOriginalFilename()).thenReturn("");
+            assertEquals(FileType.UNKNOWN, readService.getFileType(mockFile));
+        }
+
+        @Test
+        void testGetFileType_containsNoExtension() {
+            when(mockFile.isEmpty()).thenReturn(false);
+            when(mockFile.getOriginalFilename()).thenReturn("test");
+            assertEquals(FileType.UNKNOWN, readService.getFileType(mockFile));
+        }
+
+        @Test
+        void testGetFileType_validFiles() {
+            for (FileType fileType : FileType.values()) {
+                when(mockFile.getOriginalFilename()).thenReturn("test." + fileType.extension);
+                assertEquals(fileType, readService.getFileType(mockFile));
+            }
         }
     }
 }
