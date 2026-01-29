@@ -2,7 +2,7 @@ package com.mtxrii.file.mtxfile.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -10,11 +10,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 public class SummarizationClient {
+    private final Dotenv dotenv;
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
-
-    @Value("${openai.api.key}")
-    private String apiKey;
 
     public SummarizationClient() {
         this.webClient = WebClient.builder()
@@ -22,6 +20,7 @@ public class SummarizationClient {
                                   .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                                   .build();
         this.objectMapper = new ObjectMapper();
+        this.dotenv = Dotenv.load();
     }
 
     public String summarize(String text) {
@@ -35,7 +34,7 @@ public class SummarizationClient {
 
         String response = webClient.post()
                                    .uri("/responses")
-                                   .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.apiKey)
+                                   .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.dotenv.get("OPENAI_API_KEY"))
                                    .bodyValue(requestBody)
                                    .retrieve()
                                    .bodyToMono(String.class)
