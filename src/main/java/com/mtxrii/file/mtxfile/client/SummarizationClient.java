@@ -2,6 +2,7 @@ package com.mtxrii.file.mtxfile.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class SummarizationClient {
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
+
+    @Value("${openai.api.key}")
+    private String apiKey;
 
     public SummarizationClient() {
         this.webClient = WebClient.builder()
@@ -30,8 +34,8 @@ public class SummarizationClient {
         """.formatted(escapeJson(text));
 
         String response = webClient.post()
-                                   .uri("/responses")
-                                   .header(HttpHeaders.AUTHORIZATION, "Bearer " + System.getenv("OPENAI_API_KEY"))
+                                   .uri("/chat/completions")
+                                   .header(HttpHeaders.AUTHORIZATION, "Bearer " + this.apiKey)
                                    .bodyValue(requestBody)
                                    .retrieve()
                                    .bodyToMono(String.class)
@@ -43,11 +47,10 @@ public class SummarizationClient {
     private String extractSummary(String json) {
         try {
             JsonNode root = objectMapper.readTree(json);
-            return root.path("output")
+            return root.path("choices")
                        .get(0)
+                       .path("message")
                        .path("content")
-                       .get(0)
-                       .path("text")
                        .asText();
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse summary response", e);

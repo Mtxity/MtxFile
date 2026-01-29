@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile.api.service;
 
 import com.mtxrii.file.mtxfile.FileType;
+import com.mtxrii.file.mtxfile.client.SummarizationClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,12 @@ import static org.mockito.Mockito.when;
 class ReadServiceTests {
     private ReadService readService;
 
+    @Mock
+    private SummarizationClient mockSummarizationClient = mock(SummarizationClient.class);
+
     @BeforeEach
     void setUp() {
-        readService = new ReadService();
+        readService = new ReadService(mockSummarizationClient);
     }
 
     @Nested
