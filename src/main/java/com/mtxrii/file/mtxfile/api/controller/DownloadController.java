@@ -33,12 +33,10 @@ public class DownloadController {
             return ResponseEntity.badRequest().build();
         }
 
-        int slashPos = url.lastIndexOf('/');
-        String filename = (slashPos >= 0) ? url.substring(slashPos + 1) : "downloaded-file";
-
         ByteArrayResource resource = new ByteArrayResource(fileBytes);
+        String contentDisposition = this.downloadService.getContentDispositionHeader(url);
         return ResponseEntity.ok()
-                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                             .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                              .contentType(MediaType.APPLICATION_OCTET_STREAM)
                              .contentLength(fileBytes.length)
                              .body(resource);
@@ -66,11 +64,9 @@ public class DownloadController {
             contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
 
-        int slashPos = fileUrl.lastIndexOf('/');
-        String filename = (slashPos >= 0) ? fileUrl.substring(slashPos + 1) : "downloaded-file";
-
+        String contentDisposition = this.downloadService.getContentDispositionHeader(fileUrl);
         return ResponseEntity.ok()
-                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                             .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                              .contentType(MediaType.parseMediaType(contentType))
                              .body(new InputStreamResource(inputStream));
     }

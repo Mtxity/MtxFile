@@ -20,4 +20,10 @@ public class DownloadService {
                         .bodyToMono(byte[].class)
                         .block();
     }
+
+    public String getContentDispositionHeader(String url) {
+        int slashPos = url.lastIndexOf('/');
+        String filename = (slashPos >= 0) ? url.substring(slashPos + 1) : "downloaded-file";
+        return "attachment; filename=\"" + filename + "\"";
+    }
 }
