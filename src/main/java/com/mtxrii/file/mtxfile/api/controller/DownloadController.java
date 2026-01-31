@@ -33,13 +33,12 @@ public class DownloadController {
             return ResponseEntity.badRequest().build();
         }
 
-        ByteArrayResource resource = new ByteArrayResource(fileBytes);
         String contentDisposition = this.downloadService.getContentDispositionHeader(url);
         return ResponseEntity.ok()
                              .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                              .contentType(MediaType.APPLICATION_OCTET_STREAM)
                              .contentLength(fileBytes.length)
-                             .body(resource);
+                             .body(new ByteArrayResource(fileBytes));
     }
 
     @GetMapping("/direct/v2")
