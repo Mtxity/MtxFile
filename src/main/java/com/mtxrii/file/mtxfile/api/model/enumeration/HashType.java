@@ -19,4 +19,13 @@ public enum HashType {
     public String getKey() {
         return this.key;
     }
+
+    public static HashType fromKey(String key) {
+        for (HashType hashType : HashType.values()) {
+            if (hashType.getKey().equals(key)) {
+                return hashType;
+            }
+        }
+        return null;
+    }
 }

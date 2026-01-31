@@ -7,6 +7,7 @@ import com.mtxrii.file.mtxfile.api.model.enumeration.FileType;
 import com.mtxrii.file.mtxfile.api.model.HashContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
+import com.mtxrii.file.mtxfile.api.model.enumeration.HashType;
 import com.mtxrii.file.mtxfile.client.SummarizationClient;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -260,8 +261,12 @@ public class ReadService {
 
     public HashContentsResponse hashContents(MultipartFile file, String hashAlg) throws IOException {
         ReadContentsResponse contents = this.readContents(file);
+        HashType hashAlgToUse = HashType.fromKey(Optional.ofNullable(hashAlg).orElse("SHA-256"));
+        if (hashAlgToUse == null) {
+            throw new IllegalArgumentException("Invalid hash algorithm: " + hashAlg);
+        }
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance(hashAlgToUse.getKey());
             byte[] hashBytes = digest.digest(contents.getContents().getBytes(StandardCharsets.UTF_8));
 
             StringBuilder hexString = new StringBuilder();
