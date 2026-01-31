@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mtxrii.file.mtxfile.api.model.HashContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.JsonifyResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
@@ -130,6 +131,22 @@ public class ReadController {
             HttpServletRequest request
     ) throws IOException {
         SummarizedContentsResponse readContentsResponse = this.readService.summarizeContents(file);
+        Response response = readContentsResponse.path(request.getRequestURI());
+        return ResponseEntity
+                .status(200)
+                .body(response);
+    }
+
+    @PostMapping(
+            value = "/hash",
+            consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Response> handleHashContents(
+            @RequestParam("file") MultipartFile file,
+            HttpServletRequest request
+    ) throws IOException {
+        HashContentsResponse readContentsResponse = this.readService.hashContents(file);
         Response response = readContentsResponse.path(request.getRequestURI());
         return ResponseEntity
                 .status(200)
