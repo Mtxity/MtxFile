@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.mtxrii.file.mtxfile.FileType;
+import com.mtxrii.file.mtxfile.api.model.HashContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
 import com.mtxrii.file.mtxfile.client.SummarizationClient;
@@ -36,6 +37,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -253,6 +256,27 @@ public class ReadService {
                 file.getOriginalFilename(),
                 summary
         );
+    }
+
+    public HashContentsResponse hashContents(MultipartFile file) throws IOException {
+        ReadContentsResponse contents = this.readContents(file);
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(contents.getContents().getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            String hashedVal = hexString.toString();
+            return new HashContentsResponse(file.getOriginalFilename(), hashedVal);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 algorithm not available", e);
+        }
     }
 
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
