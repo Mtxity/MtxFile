@@ -25,11 +25,7 @@ public class DownloadController {
         this.webClient = WebClient.builder().build();
     }
 
-    @GetMapping(
-            value = "/direct/v1",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_OCTET_STREAM_VALUE
-    )
+    @GetMapping("/direct/v1")
     ResponseEntity<ByteArrayResource> handleDownloadDirectV1(
             @RequestParam("url") String url
     ) {
