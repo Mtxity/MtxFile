@@ -1,4 +1,4 @@
-package com.mtxrii.file.mtxfile;
+package com.mtxrii.file.mtxfile.api.model.enumeration;
 
 import java.util.Locale;
 

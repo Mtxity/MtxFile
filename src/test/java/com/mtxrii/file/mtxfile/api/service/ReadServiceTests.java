@@ -1,6 +1,6 @@
 package com.mtxrii.file.mtxfile.api.service;
 
-import com.mtxrii.file.mtxfile.FileType;
+import com.mtxrii.file.mtxfile.api.model.enumeration.FileType;
 import com.mtxrii.file.mtxfile.client.SummarizationClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

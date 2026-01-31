@@ -3,7 +3,7 @@ package com.mtxrii.file.mtxfile.api.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.mtxrii.file.mtxfile.FileType;
+import com.mtxrii.file.mtxfile.api.model.enumeration.FileType;
 import com.mtxrii.file.mtxfile.api.model.HashContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
