@@ -1,8 +1,10 @@
 package com.mtxrii.file.mtxfile.api.service;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.HttpURLConnection;
 import java.net.URI;
 
 @Service
@@ -25,5 +27,13 @@ public class DownloadService {
         int slashPos = url.lastIndexOf('/');
         String filename = (slashPos >= 0) ? url.substring(slashPos + 1) : "downloaded-file";
         return "attachment; filename=\"" + filename + "\"";
+    }
+
+    public MediaType getMediaType(HttpURLConnection connection) {
+        String contentType = connection.getContentType();
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+        return MediaType.parseMediaType(contentType);
     }
 }

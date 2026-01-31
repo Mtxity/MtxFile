@@ -56,17 +56,10 @@ public class DownloadController {
             throw new IllegalArgumentException("Failed to download file. HTTP status: " + status);
         }
 
-        InputStream inputStream = connection.getInputStream();
-
-        String contentType = connection.getContentType();
-        if (contentType == null) {
-            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        }
-
         String contentDisposition = this.downloadService.getContentDispositionHeader(fileUrl);
         return ResponseEntity.ok()
                              .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                             .contentType(MediaType.parseMediaType(contentType))
-                             .body(new InputStreamResource(inputStream));
+                             .contentType(this.downloadService.getMediaType(connection))
+                             .body(new InputStreamResource(connection.getInputStream()));
     }
 }
