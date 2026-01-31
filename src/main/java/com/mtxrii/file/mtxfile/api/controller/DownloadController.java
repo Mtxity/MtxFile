@@ -1,5 +1,6 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
+import com.mtxrii.file.mtxfile.api.service.DownloadService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -9,32 +10,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 
 @RestController
 @RequestMapping("/download")
 public class DownloadController {
-    private final WebClient webClient;
+    private final DownloadService downloadService;
 
-    public DownloadController() {
-        this.webClient = WebClient.builder().build();
+    public DownloadController(DownloadService downloadService) {
+        this.downloadService = downloadService;
     }
 
     @GetMapping("/direct/v1")
     ResponseEntity<ByteArrayResource> handleDownloadDirectV1(
             @RequestParam("url") String url
     ) {
-        byte[] fileBytes = webClient.get()
-                                    .uri(URI.create(url))
-                                    .retrieve()
-                                    .bodyToMono(byte[].class)
-                                    .block();
-
+        byte[] fileBytes = this.downloadService.downloadDirectV1(url);
         if (fileBytes == null) {
             return ResponseEntity.badRequest().build();
         }
