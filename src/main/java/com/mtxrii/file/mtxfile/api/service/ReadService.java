@@ -261,7 +261,8 @@ public class ReadService {
 
     public HashContentsResponse hashContents(MultipartFile file, String hashAlg) throws IOException {
         ReadContentsResponse contents = this.readContents(file);
-        HashType hashAlgToUse = HashType.fromKey(Optional.ofNullable(hashAlg).orElse("SHA-256"));
+        hashAlg = hashAlg.toUpperCase(Locale.ROOT);
+        HashType hashAlgToUse = HashType.fromKey(Optional.of(hashAlg).orElse("SHA-256"));
         if (hashAlgToUse == null) {
             throw new IllegalArgumentException("Invalid hash algorithm: " + hashAlg);
         }
@@ -280,7 +281,7 @@ public class ReadService {
             String hashedVal = hexString.toString();
             return new HashContentsResponse(file.getOriginalFilename(), hashedVal);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 algorithm not available", e);
+            throw new RuntimeException(hashAlg + " algorithm not available", e);
         }
     }
 
