@@ -258,7 +258,7 @@ public class ReadService {
         );
     }
 
-    public HashContentsResponse hashContents(MultipartFile file) throws IOException {
+    public HashContentsResponse hashContents(MultipartFile file, String hashAlg) throws IOException {
         ReadContentsResponse contents = this.readContents(file);
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
