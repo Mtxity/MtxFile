@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -24,6 +23,7 @@ public class DownloadController {
         this.downloadService = downloadService;
     }
 
+    // @TODO: Test this
     @GetMapping("/direct/v1")
     ResponseEntity<ByteArrayResource> handleDownloadDirectV1(
             @RequestParam("url") String url
@@ -41,6 +41,7 @@ public class DownloadController {
                              .body(new ByteArrayResource(fileBytes));
     }
 
+    // @TODO: Test this
     @GetMapping("/direct/v2")
     public ResponseEntity<InputStreamResource> handleDownloadDirectV2(
             @RequestParam("url") String fileUrl
