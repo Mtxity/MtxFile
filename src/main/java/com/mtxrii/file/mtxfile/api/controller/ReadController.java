@@ -24,6 +24,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/read")
 public class ReadController {
+    private static final String FILE_PARAM = "file";
+
     private final ReadService readService;
 
     public ReadController(ReadService readService) {
@@ -32,11 +34,11 @@ public class ReadController {
 
     @PostMapping(
             value = "/contents",
-            consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleReadContents(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
         ReadContentsResponse readContentsResponse = this.readService.readContents(file);
@@ -52,7 +54,7 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyCsv(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
         List<Map<String, String>> json = this.readService.jsonifyCsv(file);
@@ -67,7 +69,7 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyXls(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
         Map<String, List<Map<String, Object>>> json = this.readService.jsonifyXls(file);
@@ -82,7 +84,7 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyXml(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
         JsonNode json = this.readService.jsonifyXml(file);
@@ -97,7 +99,7 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleJsonifyYml(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
         JsonNode json = this.readService.jsonifyYml(file);
@@ -112,7 +114,7 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleWordCount(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
         int wordCount = this.readService.wordCount(file);
@@ -127,7 +129,7 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleSummarizeContents(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
         SummarizedContentsResponse readContentsResponse = this.readService.summarizeContents(file);
@@ -143,7 +145,7 @@ public class ReadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleHashContents(
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(FILE_PARAM) MultipartFile file,
             @RequestParam(name = "hashAlg", required = false, defaultValue = "SHA-256") String hashAlg,
             HttpServletRequest request
     ) throws IOException {
