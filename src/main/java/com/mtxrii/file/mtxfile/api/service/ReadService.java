@@ -280,8 +280,11 @@ public class ReadService {
             }
             String hashedVal = hexString.toString();
             return new HashContentsResponse(file.getOriginalFilename(), hashedVal);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(hashAlg + " algorithm not available", e);
+        } catch (NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(hashAlg + " algorithm not available", nsae);
+        } catch (NullPointerException npe) {
+            throw new RuntimeException(hashAlg + " algorithm unknown", npe);
+
         }
     }
 
