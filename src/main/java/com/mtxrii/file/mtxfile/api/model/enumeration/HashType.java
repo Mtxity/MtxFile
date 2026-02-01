@@ -10,6 +10,8 @@ public enum HashType {
     MD2("MD2"),
     MD5("MD5");
 
+    public static final String DEFAULT_BY_KEY = "SHA-256";
+
     private final String key;
 
     HashType(String key) {

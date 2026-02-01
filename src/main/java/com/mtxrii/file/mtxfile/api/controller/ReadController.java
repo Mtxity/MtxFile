@@ -7,6 +7,7 @@ import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.WordCountResponse;
+import com.mtxrii.file.mtxfile.api.model.enumeration.HashType;
 import com.mtxrii.file.mtxfile.api.service.ReadService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
@@ -146,7 +147,7 @@ public class ReadController {
     )
     public ResponseEntity<Response> handleHashContents(
             @RequestParam(FILE_PARAM) MultipartFile file,
-            @RequestParam(name = "hashAlg", required = false, defaultValue = "SHA-256") String hashAlg,
+            @RequestParam(name = "hashAlg", required = false, defaultValue = HashType.DEFAULT_BY_KEY) String hashAlg,
             @RequestParam(name = "salt", required = false, defaultValue = "") String salt,
             HttpServletRequest request
     ) throws IOException {
