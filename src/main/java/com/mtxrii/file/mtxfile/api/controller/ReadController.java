@@ -147,9 +147,10 @@ public class ReadController {
     public ResponseEntity<Response> handleHashContents(
             @RequestParam(FILE_PARAM) MultipartFile file,
             @RequestParam(name = "hashAlg", required = false, defaultValue = "SHA-256") String hashAlg,
+            @RequestParam(name = "salt", required = false, defaultValue = "") String salt,
             HttpServletRequest request
     ) throws IOException {
-        HashContentsResponse readContentsResponse = this.readService.hashContents(file, hashAlg);
+        HashContentsResponse readContentsResponse = this.readService.hashContents(file, hashAlg, salt);
         Response response = readContentsResponse.path(request.getRequestURI());
         return ResponseEntity
                 .status(200)

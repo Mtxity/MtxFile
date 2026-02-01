@@ -259,7 +259,7 @@ public class ReadService {
         );
     }
 
-    public HashContentsResponse hashContents(MultipartFile file, String hashAlg) throws IOException {
+    public HashContentsResponse hashContents(MultipartFile file, String hashAlg, String salt) throws IOException {
         ReadContentsResponse contents = this.readContents(file);
         hashAlg = hashAlg.toUpperCase(Locale.ROOT);
         HashType hashAlgToUse = HashType.fromKey(Optional.of(hashAlg).orElse("SHA-256"));
@@ -268,7 +268,8 @@ public class ReadService {
         }
         try {
             MessageDigest digest = MessageDigest.getInstance(hashAlgToUse.getKey());
-            byte[] hashBytes = digest.digest(contents.getContents().getBytes(StandardCharsets.UTF_8));
+            String contentsToHash = contents.getContents() + salt;
+            byte[] hashBytes = digest.digest(contentsToHash.getBytes(StandardCharsets.UTF_8));
 
             StringBuilder hexString = new StringBuilder();
             for (byte b : hashBytes) {
