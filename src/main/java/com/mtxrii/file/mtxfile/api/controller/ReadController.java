@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mtxrii.file.mtxfile.api.model.ErrorResponse;
 import com.mtxrii.file.mtxfile.api.model.HashContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.JsonifyResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
@@ -10,6 +11,7 @@ import com.mtxrii.file.mtxfile.api.model.WordCountResponse;
 import com.mtxrii.file.mtxfile.api.model.enumeration.HashType;
 import com.mtxrii.file.mtxfile.api.service.ReadService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,8 +44,13 @@ public class ReadController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        ReadContentsResponse readContentsResponse = this.readService.readContents(file);
-        Response response = readContentsResponse.path(request.getRequestURI());
+        Response response;
+        try {
+            ReadContentsResponse readContentsResponse = this.readService.readContents(file);
+            response = readContentsResponse.path(request.getRequestURI());
+        } catch (IllegalArgumentException iae) {
+            response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), iae.getMessage());
+        }
         return ResponseEntity
                 .status(200)
                 .body(response);
