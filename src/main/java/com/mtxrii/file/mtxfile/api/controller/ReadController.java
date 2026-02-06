@@ -156,9 +156,11 @@ public class ReadController {
     ) throws IOException {
         HashContentsResponse readContentsResponse = this.readService.hashContents(file, hashAlg, salt);
         if (!times.equals("1")) {
-            for (int i = 0; i < Math.min(Integer.parseInt(times), 500); i++) {
+            int timesToHash = Math.max(Math.min(Integer.parseInt(times), 500), 0);
+            for (int i = 0; i < timesToHash - 1; i++) {
                 readContentsResponse = this.readService.hashContents(file, hashAlg, readContentsResponse.hash + salt);
             }
+            readContentsResponse.setTimesHashed(timesToHash);
         }
         Response response = readContentsResponse.path(request.getRequestURI());
         return ResponseEntity
