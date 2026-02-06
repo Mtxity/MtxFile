@@ -176,6 +176,7 @@ public class ReadController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             @RequestParam(name = "hashAlg", required = false, defaultValue = HashType.DEFAULT_BY_KEY) String hashAlg,
             @RequestParam(name = "salt", required = false, defaultValue = "") String salt,
+            @RequestParam(name = "times", required = false, defaultValue = "1") String times,
             HttpServletRequest request
     ) throws IOException {
         HashContentsResponse readContentsResponse = this.readService.hashContents(file, hashAlg, salt);
