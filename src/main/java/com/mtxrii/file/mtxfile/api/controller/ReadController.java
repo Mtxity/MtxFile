@@ -180,6 +180,11 @@ public class ReadController {
             HttpServletRequest request
     ) throws IOException {
         HashContentsResponse readContentsResponse = this.readService.hashContents(file, hashAlg, salt);
+        if (!times.equals("1")) {
+            for (int i = 0; i < Integer.parseInt(times); i++) {
+                readContentsResponse = this.readService.hashContents(file, hashAlg, readContentsResponse.hash + salt);
+            }
+        }
         Response response = readContentsResponse.path(request.getRequestURI());
         return ResponseEntity
                 .status(200)
