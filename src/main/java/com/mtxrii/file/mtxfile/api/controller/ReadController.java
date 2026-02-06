@@ -44,13 +44,8 @@ public class ReadController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        Response response;
-        try {
-            ReadContentsResponse readContentsResponse = this.readService.readContents(file);
-            response = readContentsResponse.path(request.getRequestURI());
-        } catch (IllegalArgumentException iae) {
-            response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), iae.getMessage());
-        }
+        ReadContentsResponse readContentsResponse = this.readService.readContents(file);
+        Response response = readContentsResponse.path(request.getRequestURI());
         return ResponseEntity
                 .status(200)
                 .body(response);
@@ -65,14 +60,9 @@ public class ReadController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        Response response;
-        try {
-            List<Map<String, String>> json = this.readService.jsonifyCsv(file);
-            JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-            response = jsonifyResponse.path(request.getRequestURI());
-        } catch (IllegalArgumentException iae) {
-            response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), iae.getMessage());
-        }
+        List<Map<String, String>> json = this.readService.jsonifyCsv(file);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 
@@ -85,14 +75,9 @@ public class ReadController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        Response response;
-        try {
-            Map<String, List<Map<String, Object>>> json = this.readService.jsonifyXls(file);
-            JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-            response = jsonifyResponse.path(request.getRequestURI());
-        } catch (IllegalArgumentException iae) {
-            response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), iae.getMessage());
-        }
+        Map<String, List<Map<String, Object>>> json = this.readService.jsonifyXls(file);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 
@@ -105,14 +90,9 @@ public class ReadController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        Response response;
-        try {
-            JsonNode json = this.readService.jsonifyXml(file);
-            JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-            response = jsonifyResponse.path(request.getRequestURI());
-        }  catch (IllegalArgumentException iae) {
-            response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), iae.getMessage());
-        }
+        JsonNode json = this.readService.jsonifyXml(file);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 
@@ -125,14 +105,9 @@ public class ReadController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        Response response;
-        try {
-            JsonNode json = this.readService.jsonifyYml(file);
-            JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-            response = jsonifyResponse.path(request.getRequestURI());
-        }  catch (IllegalArgumentException iae) {
-            response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), iae.getMessage());
-        }
+        JsonNode json = this.readService.jsonifyYml(file);
+        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
+        Response response = jsonifyResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 
