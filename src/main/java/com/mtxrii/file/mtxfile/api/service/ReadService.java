@@ -3,9 +3,11 @@ package com.mtxrii.file.mtxfile.api.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.mtxrii.file.mtxfile.FileType;
+import com.mtxrii.file.mtxfile.api.model.enumeration.FileType;
+import com.mtxrii.file.mtxfile.api.model.HashContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
+import com.mtxrii.file.mtxfile.api.model.enumeration.HashType;
 import com.mtxrii.file.mtxfile.client.SummarizationClient;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -36,6 +38,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -253,6 +257,36 @@ public class ReadService {
                 file.getOriginalFilename(),
                 summary
         );
+    }
+
+    public HashContentsResponse hashContents(MultipartFile file, String hashAlg, String salt) throws IOException {
+        ReadContentsResponse contents = this.readContents(file);
+        hashAlg = hashAlg.toUpperCase(Locale.ROOT);
+        HashType hashAlgToUse = HashType.fromKey(Optional.of(hashAlg).orElse("SHA-256"));
+        if (hashAlgToUse == null) {
+            throw new IllegalArgumentException("Invalid hash algorithm: " + hashAlg);
+        }
+        try {
+            MessageDigest digest = MessageDigest.getInstance(hashAlgToUse.getKey());
+            String contentsToHash = contents.getContents() + salt;
+            byte[] hashBytes = digest.digest(contentsToHash.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            String hashedVal = hexString.toString();
+            return new HashContentsResponse(file.getOriginalFilename(), hashedVal);
+        } catch (NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(hashAlg + " algorithm not available", nsae);
+        } catch (NullPointerException npe) {
+            throw new RuntimeException(hashAlg + " algorithm unknown", npe);
+
+        }
     }
 
     private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
