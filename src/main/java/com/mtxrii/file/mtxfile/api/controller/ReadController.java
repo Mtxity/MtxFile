@@ -181,7 +181,7 @@ public class ReadController {
     ) throws IOException {
         HashContentsResponse readContentsResponse = this.readService.hashContents(file, hashAlg, salt);
         if (!times.equals("1")) {
-            for (int i = 0; i < Integer.parseInt(times); i++) {
+            for (int i = 0; i < Math.min(Integer.parseInt(times), 500); i++) {
                 readContentsResponse = this.readService.hashContents(file, hashAlg, readContentsResponse.hash + salt);
             }
         }
