@@ -27,4 +27,13 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public ResponseEntity<Response> handleNumberFormatException(NumberFormatException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.UNPROCESSABLE_CONTENT.value(),
+                "Failed to parse integer. " + ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(errorResponse);
+    }
 }
