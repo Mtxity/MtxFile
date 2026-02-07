@@ -45,7 +45,7 @@ public class CsvService {
         return firstRow == null ? 0 : firstRow.size();
     }
 
-    public int countEmptyValues(List<Map<String, String>> csvData) {
+    private int countEmptyValues(List<Map<String, String>> csvData) {
         if (csvData == null || csvData.isEmpty()) {
             return 0;
         }
@@ -64,7 +64,7 @@ public class CsvService {
         return emptyCount;
     }
 
-    public Map<String, Integer> countUniqueValuesPerHeader(List<Map<String, String>> csvData) {
+    private Map<String, Integer> countUniqueValuesPerHeader(List<Map<String, String>> csvData) {
         Map<String, Set<String>> uniques = new HashMap<>();
         if (csvData == null || csvData.isEmpty()) {
             return Map.of();
@@ -88,7 +88,7 @@ public class CsvService {
         return result;
     }
 
-    public Map<String, String> mostCommonValuesPerHeader(List<Map<String, String>> csvData) {
+    private Map<String, String> mostCommonValuesPerHeader(List<Map<String, String>> csvData) {
         if (csvData == null || csvData.isEmpty()) {
             return Map.of();
         }
