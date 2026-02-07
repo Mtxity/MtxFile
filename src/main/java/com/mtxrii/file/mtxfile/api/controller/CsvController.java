@@ -1,7 +1,8 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
-import com.mtxrii.file.mtxfile.api.model.JsonifyResponse;
+import com.mtxrii.file.mtxfile.api.model.CsvDescriptResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
+import com.mtxrii.file.mtxfile.api.service.CsvService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/csv")
 public class CsvController {
     private static final String FILE_PARAM = "file";
+
+    private final CsvService csvService;
+
+    public CsvController(CsvService csvService) {
+        this.csvService = csvService;
+    }
 
     @PostMapping(
             value = "/analytics/descript",
@@ -29,9 +34,8 @@ public class CsvController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        List<Map<String, String>> json = this.csvService.jsonifyCsv(file);
-        JsonifyResponse jsonifyResponse = new JsonifyResponse(file.getOriginalFilename(), json);
-        Response response = jsonifyResponse.path(request.getRequestURI());
+        CsvDescriptResponse csvDescriptResponse = this.csvService.descriptCsv(file);
+        Response response = csvDescriptResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 }
