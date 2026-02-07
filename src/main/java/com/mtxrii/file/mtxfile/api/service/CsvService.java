@@ -25,6 +25,7 @@ public class CsvService {
         int totalColumns = this.calculateTotalColumns(csvData);
         int totalEmptyValues = this.countEmptyValues(csvData);
         Map<String, Integer> uniqueValuesPerHeader = this.countUniqueValuesPerHeader(csvData);
+        Map<String, String> mostCommonValuesPerHeader = this.mostCommonValuesPerHeader(csvData);
         // @TODO: DO analytics
     }
 
@@ -75,6 +76,49 @@ public class CsvService {
         Map<String, Integer> result = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : uniques.entrySet()) {
             result.put(entry.getKey(), entry.getValue().size());
+        }
+        return result;
+    }
+
+    public Map<String, String> mostCommonValuesPerHeader(List<Map<String, String>> csvData) {
+        if (csvData == null || csvData.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<String, Map<String, Integer>> countsByHeader = new HashMap<>();
+        Map<String, String> firstSeenByHeader = new HashMap<>();
+        for (Map<String, String> row : csvData) {
+            if (row == null || row.isEmpty()) {
+                continue;
+            }
+            for (Map.Entry<String, String> entry : row.entrySet()) {
+                String header = entry.getKey();
+                String value = entry.getValue();
+                if (value == null) {
+                    continue;
+                }
+                countsByHeader.computeIfAbsent(header, k -> new HashMap<>()).merge(value, 1, Integer::sum);
+                firstSeenByHeader.putIfAbsent(header, value);
+            }
+        }
+
+        Map<String, String> result = new HashMap<>();
+        for (Map.Entry<String, Map<String, Integer>> entry : countsByHeader.entrySet()) {
+            String header = entry.getKey();
+            Map<String, Integer> valueCounts = entry.getValue();
+
+            String mostCommon = firstSeenByHeader.get(header);
+            int bestCount = -1;
+
+            for (Map.Entry<String, Integer> vc : valueCounts.entrySet()) {
+                String value = vc.getKey();
+                int count = vc.getValue();
+                if (count > bestCount) {
+                    bestCount = count;
+                    mostCommon = value;
+                }
+            }
+            result.put(header, mostCommon);
         }
         return result;
     }
