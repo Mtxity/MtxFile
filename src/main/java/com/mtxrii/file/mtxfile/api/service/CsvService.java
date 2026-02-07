@@ -1,5 +1,6 @@
 package com.mtxrii.file.mtxfile.api.service;
 
+import com.mtxrii.file.mtxfile.api.model.CsvDescriptResponse;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -40,5 +41,10 @@ public class CsvService {
             }
             return records;
         }
+    }
+
+    public CsvDescriptResponse descriptCsv(MultipartFile file) throws IOException {
+        List<Map<String, String>> csvData = this.jsonifyCsv(file);
+        // @TODO: DO analytics
     }
 }
