@@ -20,6 +20,7 @@ public class CsvService {
         List<Map<String, String>> csvData = this.readService.jsonifyCsv(file);
         int totalRows = csvData.size();
         int totalColumns = this.calculateTotalColumns(csvData);
+        int totalEmptyValues = this.countEmptyValues(csvData);
         // @TODO: DO analytics
     }
 
@@ -29,5 +30,24 @@ public class CsvService {
         }
         Map<String, String> firstRow = csvData.getFirst();
         return firstRow == null ? 0 : firstRow.size();
+    }
+
+    public int countEmptyValues(List<Map<String, String>> csvData) {
+        if (csvData == null || csvData.isEmpty()) {
+            return 0;
+        }
+
+        int emptyCount = 0;
+        for (Map<String, String> row : csvData) {
+            if (row == null || row.isEmpty()) {
+                continue;
+            }
+            for (String value : row.values()) {
+                if (value == null || value.trim().isEmpty()) {
+                    emptyCount ++;
+                }
+            }
+        }
+        return emptyCount;
     }
 }
