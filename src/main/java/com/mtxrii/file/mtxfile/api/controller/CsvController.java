@@ -49,7 +49,7 @@ public class CsvController {
             @RequestParam(FILE_PARAM) MultipartFile file,
             HttpServletRequest request
     ) throws IOException {
-        CsvFequenciesResponse csvFrequenciesResponse = this.csvService.frequencies(file);
+        CsvFequenciesResponse csvFrequenciesResponse = this.csvService.csvFrequencies(file);
         Response response = csvFrequenciesResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }

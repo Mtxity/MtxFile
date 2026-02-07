@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile.api.service;
 
 import com.mtxrii.file.mtxfile.api.model.CsvDescriptResponse;
+import com.mtxrii.file.mtxfile.api.model.CsvFequenciesResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,10 @@ public class CsvService {
                 uniqueValuesPerHeader,
                 mostCommonValuesPerHeader
         );
+    }
+
+    public CsvFequenciesResponse csvFrequencies(MultipartFile file) throws IOException {
+        List<Map<String, String>> csvData = this.readService.jsonifyCsv(file);
     }
 
     private int calculateTotalColumns(List<Map<String, String>> csvData) {
