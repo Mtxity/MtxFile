@@ -5,8 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class CsvService {
@@ -21,6 +24,7 @@ public class CsvService {
         int totalRows = csvData.size();
         int totalColumns = this.calculateTotalColumns(csvData);
         int totalEmptyValues = this.countEmptyValues(csvData);
+        Map<String, Integer> uniqueValuesPerHeader = this.countUniqueValuesPerHeader(csvData);
         // @TODO: DO analytics
     }
 
@@ -49,5 +53,29 @@ public class CsvService {
             }
         }
         return emptyCount;
+    }
+
+    public Map<String, Integer> countUniqueValuesPerHeader(List<Map<String, String>> csvData) {
+        Map<String, Set<String>> uniques = new HashMap<>();
+        if (csvData == null || csvData.isEmpty()) {
+            return Map.of();
+        }
+
+        for (Map<String, String> row : csvData) {
+            if (row == null || row.isEmpty()) {
+                continue;
+            }
+            for (Map.Entry<String, String> entry : row.entrySet()) {
+                String header = entry.getKey();
+                String value = entry.getValue();
+                uniques.computeIfAbsent(header, k -> new HashSet<>()).add(value == null ? "" : value);
+            }
+        }
+
+        Map<String, Integer> result = new HashMap<>();
+        for (Map.Entry<String, Set<String>> entry : uniques.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().size());
+        }
+        return result;
     }
 }
