@@ -18,8 +18,14 @@ import java.util.Map;
 
 @Service
 public class CsvService {
+    private final ReadService readService;
+
+    public CsvService(ReadService readService) {
+        this.readService = readService;
+    }
 
     public List<Map<String, String>> jsonifyCsv(MultipartFile file) throws IOException {
+        this.readService.validateFileAndExtension(file, ".csv");
         try (
                 Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
                 CSVParser csvParser = CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim().parse(reader)

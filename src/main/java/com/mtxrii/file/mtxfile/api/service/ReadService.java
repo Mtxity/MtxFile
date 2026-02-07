@@ -289,7 +289,7 @@ public class ReadService {
         }
     }
 
-    private void validateFileAndExtension(MultipartFile file, String... validExtensions) {
+    public void validateFileAndExtension(MultipartFile file, String... validExtensions) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
