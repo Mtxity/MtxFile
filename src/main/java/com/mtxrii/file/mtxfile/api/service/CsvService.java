@@ -18,6 +18,16 @@ public class CsvService {
 
     public CsvDescriptResponse descriptCsv(MultipartFile file) throws IOException {
         List<Map<String, String>> csvData = this.readService.jsonifyCsv(file);
+        int totalRows = csvData.size();
+        int totalColumns = this.calculateTotalColumns(csvData);
         // @TODO: DO analytics
+    }
+
+    private int calculateTotalColumns(List<Map<String, String>> csvData) {
+        if (csvData == null || csvData.isEmpty()) {
+            return 0;
+        }
+        Map<String, String> firstRow = csvData.getFirst();
+        return firstRow == null ? 0 : firstRow.size();
     }
 }
