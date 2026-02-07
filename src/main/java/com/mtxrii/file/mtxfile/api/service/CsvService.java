@@ -40,6 +40,11 @@ public class CsvService {
 
     public CsvFequenciesResponse csvFrequencies(MultipartFile file) throws IOException {
         List<Map<String, String>> csvData = this.readService.jsonifyCsv(file);
+        Map<String, Map<String, Integer>> valueFrequencies = this.calculateValueFrequencies(csvData);
+        return new CsvFequenciesResponse(
+                file.getOriginalFilename(),
+                valueFrequencies
+        );
     }
 
     private int calculateTotalColumns(List<Map<String, String>> csvData) {
@@ -134,5 +139,27 @@ public class CsvService {
             result.put(header, mostCommon);
         }
         return result;
+    }
+
+    private Map<String, Map<String, Integer>> calculateValueFrequencies(List<Map<String, String>> csvData) {
+        if (csvData == null || csvData.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<String, Map<String, Integer>> countsByHeader = new HashMap<>();
+        for (Map<String, String> row : csvData) {
+            if (row == null || row.isEmpty()) {
+                continue;
+            }
+            for (Map.Entry<String, String> entry : row.entrySet()) {
+                String header = entry.getKey();
+                String value = entry.getValue();
+                if (value == null) {
+                    continue;
+                }
+                countsByHeader.computeIfAbsent(header, k -> new HashMap<>()).merge(value, 1, Integer::sum);
+            }
+        }
+        return countsByHeader;
     }
 }
