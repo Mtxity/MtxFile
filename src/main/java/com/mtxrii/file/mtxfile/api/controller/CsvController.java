@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
 import com.mtxrii.file.mtxfile.api.model.CsvDescriptResponse;
+import com.mtxrii.file.mtxfile.api.model.CsvFequenciesResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.service.CsvService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +37,20 @@ public class CsvController {
     ) throws IOException {
         CsvDescriptResponse csvDescriptResponse = this.csvService.descriptCsv(file);
         Response response = csvDescriptResponse.path(request.getRequestURI());
+        return ResponseEntity.status(200).body(response);
+    }
+
+    @PostMapping(
+            value = "/analytics/frequencies",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Response> handleAnalyticsFrequencies(
+            @RequestParam(FILE_PARAM) MultipartFile file,
+            HttpServletRequest request
+    ) throws IOException {
+        CsvFequenciesResponse csvFrequenciesResponse = this.csvService.frequencies(file);
+        Response response = csvFrequenciesResponse.path(request.getRequestURI());
         return ResponseEntity.status(200).body(response);
     }
 }
