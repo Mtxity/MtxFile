@@ -26,7 +26,15 @@ public class CsvService {
         int totalEmptyValues = this.countEmptyValues(csvData);
         Map<String, Integer> uniqueValuesPerHeader = this.countUniqueValuesPerHeader(csvData);
         Map<String, String> mostCommonValuesPerHeader = this.mostCommonValuesPerHeader(csvData);
-        // @TODO: DO analytics
+
+        return new CsvDescriptResponse(
+                file.getOriginalFilename(),
+                totalRows,
+                totalColumns,
+                totalEmptyValues,
+                uniqueValuesPerHeader,
+                mostCommonValuesPerHeader
+        );
     }
 
     private int calculateTotalColumns(List<Map<String, String>> csvData) {
