@@ -1,9 +1,11 @@
 package com.mtxrii.file.mtxfile.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mtxrii.file.mtxfile.api.model.enumeration.FileType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +33,17 @@ public final class FileUtil {
         return wordCount;
     }
 
-    private boolean fileHasNoName(MultipartFile file){
+    public static FileType getFileType(MultipartFile file) {
+        if (fileHasNoName(file) || !file.getOriginalFilename().contains(".")
+        ) {
+            return FileType.UNKNOWN;
+        }
+
+        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase(Locale.ROOT);
+        return FileType.fromExtension(ext);
+    }
+
+    private static boolean fileHasNoName(MultipartFile file){
         return file == null ||
                 file.getOriginalFilename() == null ||
                 file.getOriginalFilename().isEmpty();
