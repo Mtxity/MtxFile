@@ -371,17 +371,19 @@ public class ReadService {
 
     // @TODO: Move this (and similar) to own utils class
     protected FileType getFileType(MultipartFile file) {
-        if (
-                file == null
-             || file.getOriginalFilename() == null
-             || file.getOriginalFilename().isEmpty()
-             || !file.getOriginalFilename().contains(".")
+        if (fileHasNoName(file) || !file.getOriginalFilename().contains(".")
         ) {
             return FileType.UNKNOWN;
         }
 
         String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase(Locale.ROOT);
         return FileType.fromExtension(ext);
+    }
+
+    private boolean fileHasNoName(MultipartFile file){
+        return file == null ||
+               file.getOriginalFilename() == null ||
+               file.getOriginalFilename().isEmpty();
     }
 
     private int xmlJsonNodeWordCount(JsonNode node, int wordCount) {
