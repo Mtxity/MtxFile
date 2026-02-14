@@ -9,6 +9,7 @@ import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.enumeration.HashType;
 import com.mtxrii.file.mtxfile.client.SummarizationClient;
+import com.mtxrii.file.mtxfile.exception.MtxIoException;
 import com.mtxrii.file.mtxfile.util.FileUtil;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -177,7 +178,11 @@ public class ReadService {
 
     public JsonNode jsonifyYml(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".yml", ".yaml");
-        return YAML_MAPPER.readTree(file.getInputStream());
+        try {
+            return YAML_MAPPER.readTree(file.getInputStream());
+        } catch (IOException e) {
+            throw new MtxIoException(e);
+        }
     }
 
     public int wordCount(MultipartFile file) throws IOException {
