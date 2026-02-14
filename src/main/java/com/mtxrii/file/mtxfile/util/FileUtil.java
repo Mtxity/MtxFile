@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -28,5 +29,11 @@ public final class FileUtil {
             }
         }
         return wordCount;
+    }
+
+    private boolean fileHasNoName(MultipartFile file){
+        return file == null ||
+                file.getOriginalFilename() == null ||
+                file.getOriginalFilename().isEmpty();
     }
 }

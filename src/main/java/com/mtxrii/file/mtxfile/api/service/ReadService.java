@@ -380,10 +380,4 @@ public class ReadService {
         String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase(Locale.ROOT);
         return FileType.fromExtension(ext);
     }
-
-    private boolean fileHasNoName(MultipartFile file){
-        return file == null ||
-               file.getOriginalFilename() == null ||
-               file.getOriginalFilename().isEmpty();
-    }
 }
