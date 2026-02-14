@@ -2,8 +2,10 @@ package com.mtxrii.file.mtxfile.api.controller;
 
 import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.service.UploadService;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,4 +35,13 @@ public class UploadController {
                 .status(200)
                 .body(new Response(true, 200));
     }
+
+    @GetMapping(
+            value = "/contents",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<InputStreamResource> handleGet(
+            //
+    )
 }
