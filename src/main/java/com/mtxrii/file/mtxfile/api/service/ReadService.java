@@ -9,6 +9,7 @@ import com.mtxrii.file.mtxfile.api.model.ReadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.SummarizedContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.enumeration.HashType;
 import com.mtxrii.file.mtxfile.client.SummarizationClient;
+import com.mtxrii.file.mtxfile.util.FileUtil;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -227,7 +228,7 @@ public class ReadService {
                 if (contents.isEmpty()) {
                     yield 0;
                 } else {
-                    yield this.xmlJsonNodeWordCount(contents, 0);
+                    yield FileUtil.xmlJsonNodeWordCount(contents, 0);
                 }
             }
             case YML, YAML -> {
@@ -384,26 +385,5 @@ public class ReadService {
         return file == null ||
                file.getOriginalFilename() == null ||
                file.getOriginalFilename().isEmpty();
-    }
-
-    private int xmlJsonNodeWordCount(JsonNode node, int wordCount) {
-        Set<Map.Entry<String, JsonNode>> fields = node.properties();
-        for (Map.Entry<String, JsonNode> field : fields) {
-            String fieldName = field.getKey();
-            JsonNode value = field.getValue();
-
-            wordCount += fieldName.split(" ").length * 2;
-            if (value.isObject()) {
-                wordCount += this.xmlJsonNodeWordCount(value, wordCount);
-            } else if (value.isArray()) {
-                Iterator<JsonNode> elements = value.elements();
-                while (elements.hasNext()) {
-                    wordCount = this.xmlJsonNodeWordCount(elements.next(), wordCount + 2);
-                }
-            } else {
-                wordCount += value.asText().split(" ").length;
-            }
-        }
-        return wordCount;
     }
 }
