@@ -65,7 +65,7 @@ public class ReadService {
     public ReadContentsResponse readContents(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".txt", ".md", ".pdf");
         String fileContents;
-        if (this.getFileType(file) == FileType.PDF) {
+        if (FileUtil.getFileType(file) == FileType.PDF) {
             try (PDDocument document = PDDocument.load(file.getInputStream())) {
                 PDFTextStripper stripper = new PDFTextStripper();
                 fileContents = stripper.getText(document).trim();
@@ -184,7 +184,7 @@ public class ReadService {
 
     public int wordCount(MultipartFile file) throws IOException {
         this.validateFileAndExtension(file, ".txt", ".md", ".pdf", ".csv", ".xls", ".xlsx", ".xml", ".yml", ".yaml");
-        return switch (this.getFileType(file)) {
+        return switch (FileUtil.getFileType(file)) {
             case CSV -> {
                 List<Map<String, String>> contents = this.jsonifyCsv(file);
                 int words = 0;
@@ -368,16 +368,5 @@ public class ReadService {
             case ERROR -> formatter.formatCellValue(cell); // e.g., "#DIV/0!"
             default -> formatter.formatCellValue(cell, evaluator);
         };
-    }
-
-    // @TODO: Move this (and similar) to own utils class
-    protected FileType getFileType(MultipartFile file) {
-        if (fileHasNoName(file) || !file.getOriginalFilename().contains(".")
-        ) {
-            return FileType.UNKNOWN;
-        }
-
-        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase(Locale.ROOT);
-        return FileType.fromExtension(ext);
     }
 }
