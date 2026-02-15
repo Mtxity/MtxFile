@@ -1,9 +1,7 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
 import com.mtxrii.file.mtxfile.api.model.Response;
-import com.mtxrii.file.mtxfile.api.model.UploadContentsResponse;
 import com.mtxrii.file.mtxfile.api.service.UploadService;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
