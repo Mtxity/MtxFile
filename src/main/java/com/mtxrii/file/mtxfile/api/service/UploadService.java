@@ -18,4 +18,8 @@ public class UploadService {
             return true;
         }
     }
+
+    public String getUploadedFilePreview(String fileName) {
+        return UPLOADED_FILES.get(fileName).getOriginalFilename();
+    }
 }
