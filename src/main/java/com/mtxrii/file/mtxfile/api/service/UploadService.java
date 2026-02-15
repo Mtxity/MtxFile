@@ -32,22 +32,17 @@ public class UploadService {
         String fileName = file.getOriginalFilename().toUpperCase();
         String contentPreview = this.getTruncatedFileContents(file);
         int length = this.getFileContentsLength(file);
-        if (UPLOADED_FILES.containsKey(fileName)) {
-            return new UploadContentsResponse(
-                    false,
-                    fileName,
-                    contentPreview,
-                    length
-            );
-        } else {
+        boolean uploaded = UPLOADED_FILES.containsKey(fileName);
+        if (!uploaded) {
             UPLOADED_FILES.put(fileName, file);
-            return new UploadContentsResponse(
-                    true,
-                    fileName,
-                    contentPreview,
-                    length
-            );
         }
+
+        return new UploadContentsResponse(
+                uploaded,
+                fileName,
+                contentPreview,
+                length
+        );
     }
 
     public UploadContentsResponse getUploadedFilePreview(String fileName) {
