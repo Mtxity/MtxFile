@@ -20,6 +20,10 @@ public class UploadService {
     }
 
     public boolean uploadFile(MultipartFile file) {
+        if (file == null || file.getOriginalFilename() == null) {
+            return false;
+        }
+
         String fileName = file.getOriginalFilename().toUpperCase();
         if (UPLOADED_FILES.containsKey(fileName)) {
             return false;
