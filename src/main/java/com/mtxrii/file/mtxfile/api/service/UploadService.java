@@ -1,5 +1,6 @@
 package com.mtxrii.file.mtxfile.api.service;
 
+import com.mtxrii.file.mtxfile.api.model.UploadContentsResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +20,17 @@ public class UploadService {
         }
     }
 
-    public String getUploadedFilePreview(String fileName) {
-        return UPLOADED_FILES.get(fileName).getOriginalFilename();
+    public UploadContentsResponse getUploadedFilePreview(String fileName) {
+        MultipartFile file = UPLOADED_FILES.get(fileName);
+        if (file != null) {
+            return new UploadContentsResponse(
+                    true,
+                    fileName,
+                    "To be implemented...",
+                    -1 // @TODO: Implement this
+            );
+        } else {
+            return new UploadContentsResponse(false, fileName, null, -1);
+        }
     }
 }
