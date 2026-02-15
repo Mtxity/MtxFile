@@ -1,6 +1,7 @@
 package com.mtxrii.file.mtxfile.api.controller;
 
 import com.mtxrii.file.mtxfile.api.model.Response;
+import com.mtxrii.file.mtxfile.api.model.UploadContentsResponse;
 import com.mtxrii.file.mtxfile.api.service.UploadService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/upload")
 public class UploadController {
     private static final String FILE_PARAM = "file";
+
     private final UploadService uploadService;
 
     public UploadController(UploadService uploadService) {
@@ -30,10 +32,15 @@ public class UploadController {
     public ResponseEntity<Response> handleUploadContents(
             @RequestParam(FILE_PARAM) MultipartFile file
     ) {
-        boolean response = uploadService.uploadFile(file);
+        boolean uploaded = uploadService.uploadFile(file);
         return ResponseEntity
                 .status(200)
-                .body(new Response(true, 200));
+                .body(new UploadContentsResponse(
+                        uploaded,
+                        file.getOriginalFilename(),
+                        "To be implemented...",
+                        -1 // @TODO: Implement this
+                ));
     }
 
     @GetMapping(
