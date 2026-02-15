@@ -35,8 +35,6 @@ public class UploadService {
         }
 
         String fileName = file.getOriginalFilename().toUpperCase();
-        String contentPreview = this.getTruncatedFileContents(file);
-        int length = this.getFileContentsLength(file);
         FileDetails fileDetails = this.getFileDetails(file);
         boolean uploaded = UPLOADED_FILES.containsKey(fileName);
         if (!uploaded) {
@@ -46,8 +44,8 @@ public class UploadService {
         return new UploadContentsResponse(
                 uploaded,
                 fileName,
-                contentPreview,
-                length
+                fileDetails.truncateContents,
+                fileDetails.length
         );
     }
 
@@ -58,29 +56,11 @@ public class UploadService {
             return new UploadContentsResponse(
                     true,
                     fileName,
-                    this.getTruncatedFileContents(file),
-                    this.getFileContentsLength(file)
+                    fileDetails.truncateContents,
+                    fileDetails.length
             );
         } else {
             return new UploadContentsResponse(false, fileName, null, -1);
-        }
-    }
-
-    private String getTruncatedFileContents(MultipartFile file) {
-        try {
-            String fileContents = this.readService.readContents(file).getContents();
-            return fileContents.substring(0, FILE_CONTENTS_TRUNCATE_SIZE);
-        } catch (IOException e) {
-            return "Error reading file contents";
-        }
-    }
-
-    private int getFileContentsLength(MultipartFile file) {
-        try {
-            String fileContents = this.readService.readContents(file).getContents();
-            return fileContents.length();
-        } catch (IOException e) {
-            return -1;
         }
     }
 
