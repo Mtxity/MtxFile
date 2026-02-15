@@ -19,17 +19,34 @@ public class UploadService {
         this.readService = readService;
     }
 
-    public boolean uploadFile(MultipartFile file) {
+    public UploadContentsResponse uploadFile(MultipartFile file) {
         if (file == null || file.getOriginalFilename() == null) {
-            return false;
+            return new UploadContentsResponse(
+                    false,
+                    "null",
+                    null,
+                    -1
+            );
         }
 
         String fileName = file.getOriginalFilename().toUpperCase();
+        String contentPreview = this.getTruncatedFileContents(file);
+        int length = this.getFileContentsLength(file);
         if (UPLOADED_FILES.containsKey(fileName)) {
-            return false;
+            return new UploadContentsResponse(
+                    false,
+                    fileName,
+                    contentPreview,
+                    length
+            );
         } else {
             UPLOADED_FILES.put(fileName, file);
-            return true;
+            return new UploadContentsResponse(
+                    true,
+                    fileName,
+                    contentPreview,
+                    length
+            );
         }
     }
 

@@ -32,15 +32,10 @@ public class UploadController {
     public ResponseEntity<Response> handleUploadContents(
             @RequestParam(FILE_PARAM) MultipartFile file
     ) {
-        boolean uploaded = uploadService.uploadFile(file);
+        Response uploadContentsResponse = uploadService.uploadFile(file);
         return ResponseEntity
-                .status(200)
-                .body(new UploadContentsResponse(
-                        uploaded,
-                        file.getOriginalFilename(),
-                        "To be implemented...",
-                        -1 // @TODO: Implement this
-                ));
+                .status(uploadContentsResponse.getCode())
+                .body(uploadContentsResponse);
     }
 
     @GetMapping(
@@ -53,7 +48,7 @@ public class UploadController {
     ) {
         Response uploadContentsResponse = this.uploadService.getUploadedFilePreview(fileName);
         return ResponseEntity
-                .status(200)
+                .status(uploadContentsResponse.getCode())
                 .body(uploadContentsResponse);
     }
 }
