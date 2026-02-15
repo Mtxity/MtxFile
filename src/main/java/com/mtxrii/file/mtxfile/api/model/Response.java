@@ -20,4 +20,8 @@ public class Response {
         this.requestMeta.put("path", path);
         return this;
     }
+
+    public int getCode() {
+        return (int) this.requestMeta.get("code");
+    }
 }
