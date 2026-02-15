@@ -13,6 +13,11 @@ public class UploadService {
     private static final Map<String, MultipartFile> UPLOADED_FILES = new ConcurrentHashMap<>();
     private static final int FILE_CONTENTS_TRUNCATE_SIZE = 300;
 
+    private record FileDetails (
+            String truncateContents,
+            int length
+    ) { }
+
     private final ReadService readService;
 
     public UploadService(ReadService readService) {
@@ -32,6 +37,7 @@ public class UploadService {
         String fileName = file.getOriginalFilename().toUpperCase();
         String contentPreview = this.getTruncatedFileContents(file);
         int length = this.getFileContentsLength(file);
+        FileDetails fileDetails = this.getFileDetails(file);
         boolean uploaded = UPLOADED_FILES.containsKey(fileName);
         if (!uploaded) {
             UPLOADED_FILES.put(fileName, file);
@@ -47,6 +53,7 @@ public class UploadService {
 
     public UploadContentsResponse getUploadedFilePreview(String fileName) {
         MultipartFile file = UPLOADED_FILES.get(fileName.toUpperCase());
+        FileDetails fileDetails = this.getFileDetails(file);
         if (file != null) {
             return new UploadContentsResponse(
                     true,
@@ -74,6 +81,17 @@ public class UploadService {
             return fileContents.length();
         } catch (IOException e) {
             return -1;
+        }
+    }
+
+    private FileDetails getFileDetails(MultipartFile file) {
+        try {
+            String fileContents = this.readService.readContents(file).getContents();
+            String truncatedFileContents = fileContents.substring(0, FILE_CONTENTS_TRUNCATE_SIZE);
+            int fileContentsLength = fileContents.length();
+            return new FileDetails(truncatedFileContents, fileContentsLength);
+        } catch (IOException e) {
+            return new FileDetails("Error reading file contents", -1);
         }
     }
 }
