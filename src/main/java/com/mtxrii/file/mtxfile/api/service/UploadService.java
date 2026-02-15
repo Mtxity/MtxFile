@@ -36,7 +36,7 @@ public class UploadService {
                     true,
                     fileName,
                     this.getTruncatedFileContents(file),
-                    -1 // @TODO: Implement this
+                    this.getFileContentsLength(file)
             );
         } else {
             return new UploadContentsResponse(false, fileName, null, -1);
@@ -49,6 +49,15 @@ public class UploadService {
             return fileContents.substring(0, FILE_CONTENTS_TRUNCATE_SIZE);
         } catch (IOException e) {
             return "Error reading file contents";
+        }
+    }
+
+    private int getFileContentsLength(MultipartFile file) {
+        try {
+            String fileContents = this.readService.readContents(file).getContents();
+            return fileContents.length();
+        } catch (IOException e) {
+            return -1;
         }
     }
 }
