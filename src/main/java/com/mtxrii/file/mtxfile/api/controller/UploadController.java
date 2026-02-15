@@ -44,11 +44,16 @@ public class UploadController {
     }
 
     @GetMapping(
-            value = "/contents",
+            value = "/contents/{fileName}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<InputStreamResource> handleGet(
-            //
-    )
+    public ResponseEntity<Response> handleGetContents(
+            @RequestParam("fileName") String fileName
+    ) {
+        Response uploadContentsResponse = this.uploadService.getUploadedFilePreview(fileName);
+        return ResponseEntity
+                .status(200)
+                .body(uploadContentsResponse);
+    }
 }
