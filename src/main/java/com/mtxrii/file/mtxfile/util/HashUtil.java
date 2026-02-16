@@ -43,4 +43,38 @@ public final class HashUtil {
                 Base64.getEncoder().encodeToString(salt) + ":" +
                 Base64.getEncoder().encodeToString(hash);
     }
+
+
+    // --- Verify password ---
+
+    public static boolean verifyPassword(String password, String stored) {
+        ParsedHash parsed = parseHash(stored);
+        byte[] hash = pbkdf2(password.toCharArray(), parsed.salt);
+        return constantTimeEquals(parsed.hash, hash);
+    }
+
+    private static ParsedHash parseHash(String stored) {
+        String[] parts = stored.split(":");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid stored hash format");
+        }
+        int iterations = Integer.parseInt(parts[0]);
+        if (iterations != ITERATIONS) {
+            throw new IllegalArgumentException("Unsupported iteration count");
+        }
+        byte[] salt = Base64.getDecoder().decode(parts[1]);
+        byte[] hash = Base64.getDecoder().decode(parts[2]);
+        return new ParsedHash(salt, hash);
+    }
+
+    private static boolean constantTimeEquals(byte[] a, byte[] b) {
+        if (a.length != b.length) return false;
+        int result = 0;
+        for (int i = 0; i < a.length; i++) {
+            result |= a[i] ^ b[i];
+        }
+        return result == 0;
+    }
+
+    private record ParsedHash(byte[] salt, byte[] hash) { }
 }
