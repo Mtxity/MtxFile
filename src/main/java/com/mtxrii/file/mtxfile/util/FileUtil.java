@@ -34,8 +34,7 @@ public final class FileUtil {
     }
 
     public static FileType getFileType(MultipartFile file) {
-        if (fileHasNoName(file) || !file.getOriginalFilename().contains(".")
-        ) {
+        if (fileHasNoName(file) || !file.getOriginalFilename().contains(".")) {
             return FileType.UNKNOWN;
         }
 
@@ -45,7 +44,7 @@ public final class FileUtil {
 
     private static boolean fileHasNoName(MultipartFile file){
         return file == null ||
-                file.getOriginalFilename() == null ||
-                file.getOriginalFilename().isEmpty();
+               file.getOriginalFilename() == null ||
+               file.getOriginalFilename().isEmpty();
     }
 }
