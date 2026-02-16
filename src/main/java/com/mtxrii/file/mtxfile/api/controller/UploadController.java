@@ -29,9 +29,10 @@ public class UploadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleUploadContents(
-            @RequestParam(FILE_PARAM) MultipartFile file
+            @RequestParam(FILE_PARAM) MultipartFile file,
+            @RequestParam(name = "password", required = false) String password
     ) {
-        Response uploadContentsResponse = uploadService.uploadFile(file);
+        Response uploadContentsResponse = uploadService.uploadFile(file, password);
         return ResponseEntity
                 .status(uploadContentsResponse.getCode())
                 .body(uploadContentsResponse);

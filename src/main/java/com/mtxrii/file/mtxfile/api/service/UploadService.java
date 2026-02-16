@@ -1,6 +1,10 @@
 package com.mtxrii.file.mtxfile.api.service;
 
+import com.drew.lang.annotations.NotNull;
+import com.drew.lang.annotations.Nullable;
 import com.mtxrii.file.mtxfile.api.model.UploadContentsResponse;
+import com.mtxrii.file.mtxfile.dto.FileKey;
+import com.mtxrii.file.mtxfile.util.HashUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class UploadService {
     private static final Map<String, MultipartFile> UPLOADED_FILES = new ConcurrentHashMap<>();
+    private static final Map<String, String> FILE_PASSWORDS = new ConcurrentHashMap<>();
     private static final int FILE_CONTENTS_TRUNCATE_SIZE = 300;
 
     private record FileDetails (
@@ -24,7 +29,7 @@ public class UploadService {
         this.readService = readService;
     }
 
-    public UploadContentsResponse uploadFile(MultipartFile file) {
+    public UploadContentsResponse uploadFile(@NotNull MultipartFile file, @Nullable String password) {
         if (file == null || file.getOriginalFilename() == null) {
             return new UploadContentsResponse(
                     false,
@@ -36,16 +41,22 @@ public class UploadService {
 
         String fileName = file.getOriginalFilename().toUpperCase();
         FileDetails fileDetails = this.getFileDetails(file);
+        boolean passwordProtected = FILE_PASSWORDS.containsKey(fileName);
         boolean uploaded = UPLOADED_FILES.containsKey(fileName);
         if (!uploaded) {
             UPLOADED_FILES.put(fileName, file);
+            if (password != null) {
+                FILE_PASSWORDS.put(fileName, HashUtil.hashPassword(password));
+                passwordProtected = true;
+            }
         }
 
         return new UploadContentsResponse(
                 uploaded,
                 fileName,
                 fileDetails.truncateContents,
-                fileDetails.length
+                fileDetails.length,
+                passwordProtected
         );
     }
 
