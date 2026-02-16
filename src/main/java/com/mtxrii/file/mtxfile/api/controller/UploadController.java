@@ -2,6 +2,8 @@ package com.mtxrii.file.mtxfile.api.controller;
 
 import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.service.UploadService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,5 +53,35 @@ public class UploadController {
         return ResponseEntity
                 .status(uploadContentsResponse.getCode())
                 .body(uploadContentsResponse);
+    }
+
+    // @TODO: Test this
+    @GetMapping(
+            value = "/download/{fileName}",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<?> handleDownloadContents(
+            @PathVariable String fileName,
+            @RequestParam(name = "password", required = false) String password
+    ) {
+        UploadService.DownloadOutcome outcome = uploadService.getUploadedFileForDownload(fileName, password);
+        if (outcome.response() != null) {
+            return ResponseEntity
+                    .status(outcome.response().getCode())
+                    .body(outcome.response());
+        }
+
+        try {
+            return ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + outcome.file().getOriginalFilename() + "\""
+                    )
+                    .body(new InputStreamResource(outcome.file().getInputStream()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

@@ -107,4 +107,26 @@ public class UploadService {
             return new FileDetails("Error reading file contents", -1);
         }
     }
+
+    public record DownloadOutcome(MultipartFile file, Response response) { }
+
+    public DownloadOutcome getUploadedFileForDownload(@NotNull String fileName, @Nullable String password) {
+        String normalizedFileName = fileName.toUpperCase();
+        boolean passwordProtected = FILE_PASSWORDS.containsKey(normalizedFileName);
+        if (passwordProtected) {
+            if (password == null) {
+                return new DownloadOutcome(null, new UnauthorizedResponse(UnauthorizedReason.NO_PASSWORD, false));
+            }
+            String hashedPassword = FILE_PASSWORDS.get(normalizedFileName);
+            if (!HashUtil.verifyPassword(password, hashedPassword)) {
+                return new DownloadOutcome(null, new UnauthorizedResponse(UnauthorizedReason.WRONG_PASSWORD, false));
+            }
+        }
+
+        MultipartFile file = UPLOADED_FILES.get(normalizedFileName);
+        if (file == null) {
+            return new DownloadOutcome(null, new UploadContentsResponse(false, fileName, null, -1));
+        }
+        return new DownloadOutcome(file, null);
+    }
 }
