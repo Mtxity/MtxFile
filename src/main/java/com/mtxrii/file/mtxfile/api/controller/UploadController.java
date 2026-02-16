@@ -44,9 +44,10 @@ public class UploadController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<Response> handleGetContents(
-            @PathVariable String fileName
+            @PathVariable String fileName,
+            @RequestParam(name = "password", required = false) String password
     ) {
-        Response uploadContentsResponse = this.uploadService.getUploadedFilePreview(fileName);
+        Response uploadContentsResponse = this.uploadService.getUploadedFilePreview(fileName, password);
         return ResponseEntity
                 .status(uploadContentsResponse.getCode())
                 .body(uploadContentsResponse);

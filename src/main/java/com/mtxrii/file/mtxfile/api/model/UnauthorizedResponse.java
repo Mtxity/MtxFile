@@ -10,8 +10,8 @@ public class UnauthorizedResponse extends Response {
         this.message = message;
     }
 
-    public UnauthorizedResponse(UnauthorizedReason reason) {
+    public UnauthorizedResponse(UnauthorizedReason reason, boolean resourceAlreadyExists) {
         super(false, 403);
-        this.message = reason.getMessage();
+        this.message = reason.getMessage(resourceAlreadyExists);
     }
 }

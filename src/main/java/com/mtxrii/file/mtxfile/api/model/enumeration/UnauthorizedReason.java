@@ -10,7 +10,11 @@ public enum UnauthorizedReason {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessage(boolean resourceAlreadyExists) {
+        StringBuilder messageBuilder = new StringBuilder();
+        if (resourceAlreadyExists) {
+            messageBuilder.append("A resource with the same name already exists and is inaccessible. ");
+        }
+        return messageBuilder.append(this.message).toString();
     }
 }

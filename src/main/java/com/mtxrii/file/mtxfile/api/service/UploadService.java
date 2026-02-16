@@ -2,7 +2,10 @@ package com.mtxrii.file.mtxfile.api.service;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.mtxrii.file.mtxfile.api.model.Response;
+import com.mtxrii.file.mtxfile.api.model.UnauthorizedResponse;
 import com.mtxrii.file.mtxfile.api.model.UploadContentsResponse;
+import com.mtxrii.file.mtxfile.api.model.enumeration.UnauthorizedReason;
 import com.mtxrii.file.mtxfile.dto.FileKey;
 import com.mtxrii.file.mtxfile.util.HashUtil;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,7 @@ public class UploadService {
         this.readService = readService;
     }
 
-    public UploadContentsResponse uploadFile(@NotNull MultipartFile file, @Nullable String password) {
+    public Response uploadFile(@NotNull MultipartFile file, @Nullable String password) {
         if (file == null || file.getOriginalFilename() == null) {
             return new UploadContentsResponse(
                     false,
@@ -51,6 +54,14 @@ public class UploadService {
             }
         }
 
+        boolean authorized = (!FILE_PASSWORDS.containsKey(fileName)) ||
+                             (password != null && HashUtil.verifyPassword(password, FILE_PASSWORDS.get(fileName)));
+        if (!authorized) {
+            UnauthorizedReason unauthorizedReason = FILE_PASSWORDS.containsKey(fileName)
+                                                    ? UnauthorizedReason.WRONG_PASSWORD
+                                                    : UnauthorizedReason.NO_PASSWORD;
+            return new UnauthorizedResponse(unauthorizedReason, true);
+        }
         return new UploadContentsResponse(
                 uploaded,
                 fileName,
@@ -60,7 +71,17 @@ public class UploadService {
         );
     }
 
-    public UploadContentsResponse getUploadedFilePreview(String fileName) {
+    public Response getUploadedFilePreview(@NotNull String fileName, @Nullable String password) {
+        if (FILE_PASSWORDS.containsKey(fileName)) {
+            if (password == null) {
+                return new UnauthorizedResponse(UnauthorizedReason.NO_PASSWORD, false);
+            }
+            String hashedPassword = FILE_PASSWORDS.get(fileName);
+            if (!HashUtil.verifyPassword(password, hashedPassword)) {
+                return new UnauthorizedResponse(UnauthorizedReason.WRONG_PASSWORD, false);
+            }
+        }
+
         MultipartFile file = UPLOADED_FILES.get(fileName.toUpperCase());
         FileDetails fileDetails = this.getFileDetails(file);
         if (file != null) {
