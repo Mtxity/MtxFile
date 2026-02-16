@@ -71,7 +71,8 @@ public class UploadService {
     }
 
     public Response getUploadedFilePreview(@NotNull String fileName, @Nullable String password) {
-        if (FILE_PASSWORDS.containsKey(fileName)) {
+        boolean passwordProtected = FILE_PASSWORDS.containsKey(fileName);
+        if (passwordProtected) {
             if (password == null) {
                 return new UnauthorizedResponse(UnauthorizedReason.NO_PASSWORD, false);
             }
@@ -88,7 +89,8 @@ public class UploadService {
                     true,
                     fileName,
                     fileDetails.truncateContents,
-                    fileDetails.length
+                    fileDetails.length,
+                    passwordProtected
             );
         } else {
             return new UploadContentsResponse(false, fileName, null, -1);
