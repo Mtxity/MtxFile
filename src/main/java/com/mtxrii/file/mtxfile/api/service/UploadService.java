@@ -6,7 +6,6 @@ import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.model.UnauthorizedResponse;
 import com.mtxrii.file.mtxfile.api.model.UploadContentsResponse;
 import com.mtxrii.file.mtxfile.api.model.enumeration.UnauthorizedReason;
-import com.mtxrii.file.mtxfile.dto.FileKey;
 import com.mtxrii.file.mtxfile.util.HashUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
