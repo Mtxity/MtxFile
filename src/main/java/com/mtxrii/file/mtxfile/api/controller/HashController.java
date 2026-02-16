@@ -21,7 +21,9 @@ public class HashController {
     ResponseEntity<Response> handleHash(
             @RequestParam("value") String value
     ) {
-        return this.hashService.hash(value);
+        Response hashResponse = this.hashService.hash(value);
+        return ResponseEntity.status(hashResponse.getCode())
+                             .body(hashResponse);
     }
 
     @GetMapping("/verify")
@@ -29,6 +31,8 @@ public class HashController {
             @RequestParam("hash") String hash,
             @RequestParam("value") String value
     ) {
-        return this.hashService.verify(value, hash);
+        Response verifyResponse = this.hashService.verify(value, hash);
+        return ResponseEntity.status(verifyResponse.getCode())
+                             .body(verifyResponse);
     }
 }
