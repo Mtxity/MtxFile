@@ -8,7 +8,7 @@ public class HashResponse extends Response {
         this.message = message;
     }
 
-    public class NewHashResponse extends HashResponse {
+    public static class NewHashResponse extends HashResponse {
         public final boolean created;
         public final String hash;
 
@@ -25,7 +25,7 @@ public class HashResponse extends Response {
         }
     }
 
-    public class ExistingHashResponse extends HashResponse {
+    public static class ExistingHashResponse extends HashResponse {
         public final boolean matches;
 
         public ExistingHashResponse(boolean matches, String message) {
