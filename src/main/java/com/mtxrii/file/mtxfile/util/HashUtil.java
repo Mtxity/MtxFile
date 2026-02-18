@@ -67,7 +67,7 @@ public final class HashUtil {
         return new ParsedHash(salt, hash);
     }
 
-    private static boolean constantTimeEquals(byte[] a, byte[] b) {
+    protected static boolean constantTimeEquals(byte[] a, byte[] b) {
         if (a.length != b.length) return false;
         int result = 0;
         for (int i = 0; i < a.length; i++) {

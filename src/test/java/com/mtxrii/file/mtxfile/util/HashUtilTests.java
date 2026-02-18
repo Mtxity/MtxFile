@@ -1,7 +1,14 @@
 package com.mtxrii.file.mtxfile.util;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
+import javax.crypto.SecretKeyFactory;
+
+import java.security.NoSuchAlgorithmException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,5 +61,25 @@ public class HashUtilTests {
         String hashedPassword = HashUtil.hashPassword("");
         assertTrue(HashUtil.verifyPassword("", hashedPassword));
         assertFalse(HashUtil.verifyPassword(" ", hashedPassword));
+    }
+
+    @Test
+    void testVerifyPassword_constantTimeEquals_mismatchLength() {
+        assertFalse(HashUtil.constantTimeEquals(new byte[2], new byte[0]));
+    }
+
+    @Test
+    void testHashPassword_throwsIllegalStateExceptionWhenPbkdf2Fails() {
+        try (MockedStatic<SecretKeyFactory> mocked = Mockito.mockStatic(SecretKeyFactory.class)) {
+            mocked.when(() -> SecretKeyFactory.getInstance(Mockito.anyString()))
+                    .thenThrow(new NoSuchAlgorithmException("boom"));
+
+            IllegalStateException exception = assertThrows(
+                    IllegalStateException.class,
+                    () -> HashUtil.hashPassword(PASSWORD)
+            );
+
+            assertEquals("Password hashing failed", exception.getMessage());
+        }
     }
 }
