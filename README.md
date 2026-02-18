@@ -112,7 +112,7 @@ Output:
 * `/upload/contents` - Uploads a file and stores it by its filename. Accepts a password as a query parameter.
 * `/upload/contents/{fileName}` - Retrieves a file by its filename. Requires a password as a query parameter if one was provided when uploading.
 * `/upload/download/{fileName}` - Downloads a file by its filename. Requires a password as a query parameter if one was provided when uploading.
-<!-- @TODO: Add /upload/delete/{fileName} endpoint -->
+* `/upload/delete/{fileName}` - Deletes a file by its filename. Requires a password as a query parameter if one was provided when uploading.
 
 
 # Csv Endpoints
