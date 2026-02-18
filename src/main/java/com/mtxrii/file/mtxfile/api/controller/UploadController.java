@@ -57,7 +57,7 @@ public class UploadController {
     }
 
     @DeleteMapping(
-            value = "/contents/{fileName}",
+            value = "/delete/{fileName}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
