@@ -65,10 +65,10 @@ public class UploadController {
             @PathVariable String fileName,
             @RequestParam(name = "password", required = false) String password
     ) {
-        Response uploadContentsResponse = this.uploadService.deleteUploadedFile(fileName, password);
+        Response deleteContentsResponse = this.uploadService.deleteUploadedFile(fileName, password);
         return ResponseEntity
-                .status(uploadContentsResponse.getCode())
-                .body(uploadContentsResponse);
+                .status(deleteContentsResponse.getCode())
+                .body(deleteContentsResponse);
     }
 
     // @TODO: Test this
