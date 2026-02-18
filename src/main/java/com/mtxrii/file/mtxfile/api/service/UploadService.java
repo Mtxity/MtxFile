@@ -2,6 +2,7 @@ package com.mtxrii.file.mtxfile.api.service;
 
 import com.drew.lang.annotations.NotNull;
 import com.drew.lang.annotations.Nullable;
+import com.mtxrii.file.mtxfile.api.model.ErrorResponse;
 import com.mtxrii.file.mtxfile.api.model.Response;
 import com.mtxrii.file.mtxfile.api.model.UnauthorizedResponse;
 import com.mtxrii.file.mtxfile.api.model.UploadContentsResponse;
@@ -95,6 +96,29 @@ public class UploadService {
         } else {
             return new UploadContentsResponse(false, fileName, null, -1);
         }
+    }
+
+    public Response deleteUploadedFile(@NotNull String fileName, @Nullable String password) {
+        fileName = fileName.toUpperCase();
+        boolean passwordProtected = FILE_PASSWORDS.containsKey(fileName);
+        if (passwordProtected) {
+            if (password == null) {
+                return new UnauthorizedResponse(UnauthorizedReason.NO_PASSWORD, false);
+            }
+            String hashedPassword = FILE_PASSWORDS.get(fileName);
+            if (!HashUtil.verifyPassword(password, hashedPassword)) {
+                return new UnauthorizedResponse(UnauthorizedReason.WRONG_PASSWORD, false);
+            }
+        }
+
+        if (!UPLOADED_FILES.containsKey(fileName)) {
+            return new ErrorResponse(404, "File not found with name: " + fileName);
+        }
+        UPLOADED_FILES.remove(fileName);
+        if (passwordProtected) {
+            FILE_PASSWORDS.remove(fileName);
+        }
+        return new Response(true, 200);
     }
 
     private FileDetails getFileDetails(MultipartFile file) {
